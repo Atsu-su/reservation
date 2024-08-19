@@ -14,8 +14,10 @@ return new class extends Migration
     {
         Schema::create('administrators', function (Blueprint $table) {
             $table->id();
+            $table->smallInteger('admin_id');
             $table->string('name');
             $table->foreignIdFor(Role::class)->constrained();
+            $table->string('password');
             $table->timestamps();
         });
     }

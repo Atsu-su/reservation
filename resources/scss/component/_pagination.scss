@@ -1,0 +1,98 @@
+@use "../global/mixin" as g;
+
+/* component > pagination */
+.c-pagination {
+    margin: 34px auto 0;
+    width: 100%;
+    max-width: 232px;
+
+    @include g.mq(){
+        margin-top: 45px;
+        max-width: 280px;
+    }
+
+    li {
+        padding-top: 8px;
+        width: 32px;
+        height: 32px;
+        border: 1px solid black;
+        display: inline-block;
+        line-height: 1;
+        letter-spacing: 0;
+        text-align: center;
+        cursor: pointer;
+
+        &:not(:last-child) {
+            margin-right: 8px;
+        }
+
+        @include g.mq(){
+            padding-top: 12px;
+            width: 40px;
+            height: 40px;
+        }
+    }
+}
+
+li.c-pagination-dots {
+    position: relative;
+    border: none;
+
+    & span {
+        display: block;
+        position: absolute;
+        top: 24px;
+        right: 8px;
+        font-size: 16px;
+    }
+}
+
+.c-pagination-selected {
+    color: var(--color-font-white);
+    background-color: var(--color-bg-black);
+}
+
+%prev-next {
+    position: relative;
+}
+
+%prev-next-after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    border-top: 1px solid var(--color-border-black);
+    border-left: 1px solid var(--color-border-black);
+}
+
+.c-pagination-prev {
+    @extend %prev-next;
+
+    &:after {
+        @extend %prev-next-after;
+        top: 10px;
+        left: 13px;
+        transform: rotate(-45deg);
+
+        @include g.mq(){
+            top: 15px;
+            left: 16px;
+        }
+    }
+}
+
+.c-pagination-next {
+    @extend %prev-next;
+
+    &:after {
+        @extend %prev-next-after;
+        top: 10px;
+        right: 13px;
+        transform: rotate(135deg);
+
+        @include g.mq(){
+            top: 15px;
+            right: 16px;
+        }
+    }
+}

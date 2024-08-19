@@ -1,0 +1,68 @@
+@use "../global/mixin" as g;
+
+/* component > navigation */
+.c-nav {
+    display: grid;
+    grid-template-columns: calc((100 / 360) * 100%) calc((76 / 360) * 100%) calc((100 / 360) * 100%) calc((81 / 360) * 100%);
+    align-items: center;
+    font-family: var(--font-family-en);
+    font-size: 12px;
+    color: var(--color-font-white);
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    background-color: var(--color-bg-primary);
+
+    @include g.mq(){
+        padding-top: 1px;
+        margin: auto 37px auto auto;
+        width: 100%;
+        max-width: 350px;
+        display: block;
+        color: var(--color-font-primary);
+        font-size: 14px;
+        text-align: right;
+        background-color: white;
+    }
+
+    @include g.mq('wd'){
+        max-width: 500px;
+    }
+
+    & a {
+        padding: 2px 0 1px;
+        display: block;
+
+        @include g.mq(){
+            display: inline;
+        }
+    }
+
+    & a:not(:first-child) {
+        border-left: 1px solid var(--color-border-white);
+    }
+
+    & a:not(:first-child) {
+        @include g.mq(){
+            margin-left: 16px;
+        }
+    }
+
+    & a:nth-child(2){
+        @include g.mq('wd'){
+            margin-left: 30px;
+        }
+    }
+
+    & a:nth-child(3) {
+        @include g.mq('wd'){
+            margin-left: 30px;
+        }
+    }
+
+    & a:nth-child(4) {
+        @include g.mq('wd'){
+            margin-left: 37px;
+        }
+    }
+}

@@ -1,0 +1,91 @@
+@use "../global/mixin" as g;
+
+/* component > button */
+.c-header-button {
+    padding-left: 0.05em;
+    padding-right: 7px;
+    width: 100%;
+    max-width: 140px;
+    height: 40px;
+    display: grid;
+    place-content: center;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    font-family: var(--font-family-en);
+    color: var(--color-font-white);
+    text-transform: uppercase;
+    background-color: var(--color-bg-primary);
+
+    @include g.mq(){
+        padding-right: 3px;
+        max-width: 170px;
+        height:45px;
+        font-size: 16px;
+    }
+}
+
+.c-button {
+    width: 100%;
+    max-width: 220px;
+    height: 50px;
+    display: grid;
+    place-content: center;
+    position: relative;
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: 0;
+    font-family: var(--font-family-en);
+    color: var(--color-font-white);
+    text-transform: uppercase;
+    background-color: var(--color-bg-black);
+
+    @include g.mq() {
+        max-width: 240px;
+        height: 60px;
+        font-size: 18px;
+    }
+
+    &::after {
+        content: '';
+        width: 24px;
+        position: absolute;
+        top: 50%;
+        right: 0;
+        border-top: 1px solid var(--color-border-white);
+
+        @include g.mq(){
+            width: 28px;
+            transition: all 0.1s 0s ease-out;
+        }
+    }
+
+    @include g.mq(){
+        &:hover {
+            &::after {
+                /* opacityは不要かも */
+                opacity: 1;
+                right: -10px;
+            }
+        }
+    }
+
+    &--white {
+        color: var(--color-font-base);
+        background-color: var(--color-bg-white);
+
+        &:after {
+            border-top: 1px solid var(--color-border-black);
+        }
+
+        @include g.mq(){
+            &:hover {
+                background-color: rgba(252, 188, 152, 0.2);
+            }
+        }
+    }
+
+    &--center {
+        margin: 0 auto;
+    }
+}

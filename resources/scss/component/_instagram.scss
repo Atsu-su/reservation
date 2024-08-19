@@ -1,0 +1,41 @@
+@use "../global/mixin" as g;
+
+/* component > instagram */
+.c-instagram {
+    background-color: var(--color-bg-secondary);
+}
+
+.c-instagram-images {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 9px;
+    grid-row-gap: 8px;
+
+    & a:nth-child(5) {
+        grid-column: 3/4;
+        grid-row: 2/3
+    }
+
+    @include g.mq(){
+        margin-top: 49px;
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: 1fr;
+        grid-column-gap: 32px;
+        grid-row-gap: 0;
+
+        & a:nth-child(5) {
+            grid-column: 5/6;
+            grid-row: 1/2;
+        }
+    }
+}
+
+.c-instagram-button {
+    margin-top: 40px;
+
+    @include g.mq(){
+        margin-top: 48px;
+    }
+}

@@ -1,0 +1,722 @@
+@charset "UTF-8";
+/* ----------------------- */
+/* 共通定数 global
+/* ----------------------- */
+/* global > color */
+:root {
+  --color-bg-primary: #524433;
+  --color-bg-secondary: #efede9;
+  --color-bg-black: #000;
+  --color-bg-white: #fff;
+  --color-border-black: #000;
+  --color-border-redishblack: #707070;
+  --color-border-white: #fff;
+  --color-font-primary: #524433;
+  --color-font-white: #fff;
+  --color-font-base: #000;
+}
+
+/* global > content-width */
+:root {
+  --max-width-sm: 960px;
+  --max-width-md: 1080px;
+  --max-width-lg: 1200px;
+}
+
+/* global > font */
+:root {
+  --font-family-jp: "Noto Sans JP", sans-serif;
+  --font-family-en: "Montserrat", sans-serif;
+}
+
+/* ----------------------- */
+/* ファンデーション foundation
+/* ----------------------- */
+/* foundation > reset */
+html {
+  color: #000;
+  background: #fff;
+}
+
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+form,
+fieldset,
+legend,
+input,
+textarea,
+p,
+blockquote,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+fieldset,
+img {
+  border: 0;
+}
+
+address,
+caption,
+cite,
+code,
+dfn,
+em,
+strong,
+th,
+var {
+  font-style: normal;
+  font-weight: normal;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+caption,
+th {
+  text-align: left;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 100%;
+  font-weight: normal;
+}
+
+q:before,
+q:after {
+  content: "";
+}
+
+abbr,
+acronym {
+  border: 0;
+  font-variant: normal;
+}
+
+sup {
+  vertical-align: text-top;
+}
+
+sub {
+  vertical-align: text-bottom;
+}
+
+input,
+textarea,
+select,
+button {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  font-size: 100%;
+  border-radius: 0;
+  border: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: inherit;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+textarea {
+  resize: vertical;
+  display: block;
+}
+
+button {
+  padding: 0;
+  cursor: pointer;
+}
+
+legend {
+  color: #000;
+}
+
+main {
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  width: 100%;
+  height: auto;
+  vertical-align: bottom;
+}
+
+svg {
+  display: block;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+iframe {
+  vertical-align: bottom;
+}
+
+/* foundation > base */
+body {
+  font-family: var(--font-family-jp);
+  line-height: 1.8;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-font-base);
+  letter-spacing: 0.08em;
+}
+@media screen and (min-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* ----------------------- */
+/* コンポーネント component
+/* ----------------------- */
+/* component > button */
+.c-header-button {
+  padding-left: 0.05em;
+  padding-right: 7px;
+  width: 100%;
+  max-width: 140px;
+  height: 40px;
+  display: grid;
+  place-content: center;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  font-family: var(--font-family-en);
+  color: var(--color-font-white);
+  text-transform: uppercase;
+  background-color: var(--color-bg-primary);
+}
+@media screen and (min-width: 768px) {
+  .c-header-button {
+    padding-right: 3px;
+    max-width: 170px;
+    height: 45px;
+    font-size: 16px;
+  }
+}
+
+.c-button {
+  width: 100%;
+  max-width: 220px;
+  height: 50px;
+  display: grid;
+  place-content: center;
+  position: relative;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0;
+  font-family: var(--font-family-en);
+  color: var(--color-font-white);
+  text-transform: uppercase;
+  background-color: var(--color-bg-black);
+}
+@media screen and (min-width: 768px) {
+  .c-button {
+    max-width: 240px;
+    height: 60px;
+    font-size: 18px;
+  }
+}
+.c-button::after {
+  content: "";
+  width: 24px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  border-top: 1px solid var(--color-border-white);
+}
+@media screen and (min-width: 768px) {
+  .c-button::after {
+    width: 28px;
+    transition: all 0.1s 0s ease-out;
+  }
+}
+@media screen and (min-width: 768px) {
+  .c-button:hover::after {
+    /* opacityは不要かも */
+    opacity: 1;
+    right: -10px;
+  }
+}
+.c-button--white {
+  color: var(--color-font-base);
+  background-color: var(--color-bg-white);
+}
+.c-button--white:after {
+  border-top: 1px solid var(--color-border-black);
+}
+@media screen and (min-width: 768px) {
+  .c-button--white:hover {
+    background-color: rgba(252, 188, 152, 0.2);
+  }
+}
+.c-button--center {
+  margin: 0 auto;
+}
+
+/* component > title */
+.c-title-en {
+  font-family: var(--font-family-en);
+  font-size: 24px;
+  line-height: 1;
+  text-transform: uppercase;
+  overflow: hidden;
+}
+.c-title-en--center {
+  text-align: center;
+}
+.c-title-en:before {
+  content: "";
+  width: 0;
+  height: 0;
+  display: block;
+  margin-top: -2px;
+}
+.c-title-en:after {
+  content: "";
+  width: 0;
+  height: 0;
+  display: block;
+  margin-top: 2px;
+}
+@media screen and (min-width: 768px) {
+  .c-title-en {
+    font-size: 32px;
+    overflow: hidden;
+  }
+  .c-title-en:before {
+    content: "";
+    width: 0;
+    height: 0;
+    display: block;
+    margin-top: -2px;
+  }
+  .c-title-en:after {
+    content: "";
+    width: 0;
+    height: 0;
+    display: block;
+    margin-top: 3px;
+  }
+}
+.c-title-en--white {
+  color: var(--color-font-white);
+}
+
+.c-title-kv {
+  color: var(--color-font-white);
+  font-family: var(--font-family-en);
+  font-size: 26px;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+}
+@media screen and (min-width: 768px) {
+  .c-title-kv {
+    font-size: 36px;
+  }
+}
+@media screen and (min-width: 1400px) {
+  .c-title-kv {
+    font-size: 48px;
+  }
+}
+
+/* component > navigation */
+.c-nav {
+  display: grid;
+  grid-template-columns: 27.7777777778% 21.1111111111% 27.7777777778% 22.5%;
+  align-items: center;
+  font-family: var(--font-family-en);
+  font-size: 12px;
+  color: var(--color-font-white);
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  background-color: var(--color-bg-primary);
+}
+@media screen and (min-width: 768px) {
+  .c-nav {
+    padding-top: 1px;
+    margin: auto 37px auto auto;
+    width: 100%;
+    max-width: 350px;
+    display: block;
+    color: var(--color-font-primary);
+    font-size: 14px;
+    text-align: right;
+    background-color: white;
+  }
+}
+@media screen and (min-width: 932px) {
+  .c-nav {
+    max-width: 500px;
+  }
+}
+.c-nav a {
+  padding: 2px 0 1px;
+  display: block;
+}
+@media screen and (min-width: 768px) {
+  .c-nav a {
+    display: inline;
+  }
+}
+.c-nav a:not(:first-child) {
+  border-left: 1px solid var(--color-border-white);
+}
+@media screen and (min-width: 768px) {
+  .c-nav a:not(:first-child) {
+    margin-left: 16px;
+  }
+}
+@media screen and (min-width: 932px) {
+  .c-nav a:nth-child(2) {
+    margin-left: 30px;
+  }
+}
+@media screen and (min-width: 932px) {
+  .c-nav a:nth-child(3) {
+    margin-left: 30px;
+  }
+}
+@media screen and (min-width: 932px) {
+  .c-nav a:nth-child(4) {
+    margin-left: 37px;
+  }
+}
+
+/* component > kv */
+.c-kv {
+  width: 100%;
+  padding-top: 50%;
+  position: relative;
+}
+@media screen and (min-width: 768px) {
+  .c-kv {
+    padding-top: 33.6749633968%;
+  }
+}
+
+.c-kv-title {
+  margin-left: 5%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+@media screen and (min-width: 768px) {
+  .c-kv-title {
+    margin-left: 10.3221083455%;
+  }
+}
+
+/* component > post */
+/* このCSSに対応したHTMLの構造が必要 */
+.c-post:not(:first-child) {
+  margin-top: 44px;
+}
+@media screen and (min-width: 768px) {
+  .c-post:not(:first-child) {
+    margin: 0;
+  }
+}
+.c-post p {
+  margin-top: 17px;
+  font-size: 12px;
+  line-height: 1;
+}
+@media screen and (min-width: 768px) {
+  .c-post p {
+    margin-top: 19px;
+    font-size: 14px;
+  }
+}
+.c-post h3 {
+  margin-top: 15px;
+  font-size: 18px;
+  line-height: 1;
+}
+@media screen and (min-width: 768px) {
+  .c-post h3 {
+    margin-top: 9px;
+  }
+}
+@media screen and (min-width: 932px) {
+  .c-post h3 {
+    font-size: 22px;
+  }
+}
+.c-post:last-child h3 {
+  margin-top: 18px;
+}
+@media screen and (min-width: 768px) {
+  .c-post:last-child h3 {
+    margin-top: 9px;
+  }
+}
+
+/* component > instagram */
+.c-instagram {
+  background-color: var(--color-bg-secondary);
+}
+
+.c-instagram-images {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  grid-column-gap: 9px;
+  grid-row-gap: 8px;
+}
+.c-instagram-images a:nth-child(5) {
+  grid-column: 3/4;
+  grid-row: 2/3;
+}
+@media screen and (min-width: 768px) {
+  .c-instagram-images {
+    margin-top: 49px;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: 1fr;
+    grid-column-gap: 32px;
+    grid-row-gap: 0;
+  }
+  .c-instagram-images a:nth-child(5) {
+    grid-column: 5/6;
+    grid-row: 1/2;
+  }
+}
+
+.c-instagram-button {
+  margin-top: 40px;
+}
+@media screen and (min-width: 768px) {
+  .c-instagram-button {
+    margin-top: 48px;
+  }
+}
+
+/* component > pagination */
+.c-pagination {
+  margin: 34px auto 0;
+  width: 100%;
+  max-width: 232px;
+}
+@media screen and (min-width: 768px) {
+  .c-pagination {
+    margin-top: 45px;
+    max-width: 280px;
+  }
+}
+.c-pagination li {
+  padding-top: 8px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid black;
+  display: inline-block;
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  cursor: pointer;
+}
+.c-pagination li:not(:last-child) {
+  margin-right: 8px;
+}
+@media screen and (min-width: 768px) {
+  .c-pagination li {
+    padding-top: 12px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+li.c-pagination-dots {
+  position: relative;
+  border: none;
+}
+li.c-pagination-dots span {
+  display: block;
+  position: absolute;
+  top: 24px;
+  right: 8px;
+  font-size: 16px;
+}
+
+.c-pagination-selected {
+  color: var(--color-font-white);
+  background-color: var(--color-bg-black);
+}
+
+.c-pagination-next, .c-pagination-prev {
+  position: relative;
+}
+
+.c-pagination-next:after, .c-pagination-prev:after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  border-top: 1px solid var(--color-border-black);
+  border-left: 1px solid var(--color-border-black);
+}
+
+.c-pagination-prev:after {
+  top: 10px;
+  left: 13px;
+  transform: rotate(-45deg);
+}
+@media screen and (min-width: 768px) {
+  .c-pagination-prev:after {
+    top: 15px;
+    left: 16px;
+  }
+}
+
+.c-pagination-next:after {
+  top: 10px;
+  right: 13px;
+  transform: rotate(135deg);
+}
+@media screen and (min-width: 768px) {
+  .c-pagination-next:after {
+    top: 15px;
+    right: 16px;
+  }
+}
+
+/* -------------------- */
+/* へッダー header
+/* -------------------- */
+header h1 {
+  padding-left: 20px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* -------------------- */
+/* フッター footer
+/* -------------------- */
+footer p {
+  padding-left: 0.08em;
+  text-align: center;
+}
+
+/* ----------------------- */
+/* ユーティリティ utility
+/* ----------------------- */
+/* utilitity > utilitity */
+.u-visually-hidden {
+  position: absolute !important;
+  white-space: nowrap !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  padding: 0 !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  margin: -1px !important;
+}
+
+@media screen and (min-width: 768px) {
+  .u-return {
+    display: block;
+  }
+}
+
+/* ----------------------- */
+/* レイアウト layout
+/* ----------------------- */
+/* layout > container */
+.l-container-lg, .l-container-md, .l-container-sm, .l-container {
+  margin: 0 auto;
+  width: 90%;
+}
+
+.l-container-sm {
+  max-width: var(--max-width-sm);
+}
+
+.l-container-md {
+  max-width: var(--max-width-md);
+}
+
+.l-container-lg {
+  max-width: var(--max-width-lg);
+}
+
+/* layout > padding */
+.l-padding-lg, .l-padding-md {
+  padding: 69px 0 64px;
+}
+
+.l-padding-sm {
+  padding: 64px 0 64px;
+}
+@media screen and (min-width: 768px) {
+  .l-padding-sm {
+    padding: 80px 0 80px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .l-padding-md {
+    padding: 86px 0 80px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .l-padding-lg {
+    padding: 124px 0 118px;
+  }
+}

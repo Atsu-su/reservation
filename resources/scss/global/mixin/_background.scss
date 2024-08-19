@@ -1,0 +1,9 @@
+@mixin background($imagePath){
+        background:
+            linear-gradient(to right,
+                rgba(0, 0, 0, 0.7) 0%,
+                rgba(0, 0, 0, 0) 50%),
+            url($imagePath);
+        background-size: cover;
+        background-repeat: no-repeat;
+}

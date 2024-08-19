@@ -1,0 +1,42 @@
+@use "../global/mixin" as g;
+
+/* component > title */
+.c-title-en {
+    font-family: var(--font-family-en);
+    font-size: 24px;
+    line-height: 1;
+    text-transform: uppercase;
+
+    &--center {
+        text-align: center;
+    }
+
+    @include g.marginTrim(-2, 2);
+
+    @include g.mq(){
+        font-size: 32px;
+
+        @include g.marginTrim(-2, 3);
+    }
+
+    &--white {
+        color: var(--color-font-white);
+    }
+}
+
+.c-title-kv {
+    color: var(--color-font-white);
+    font-family: var(--font-family-en);
+    font-size: 26px;
+    letter-spacing: 0;
+    line-height: 1;
+    text-transform: uppercase;
+
+    @include g.mq(){
+        font-size: 36px;
+    }
+
+    @include g.mq('xxl'){
+        font-size: 48px;
+    }
+}

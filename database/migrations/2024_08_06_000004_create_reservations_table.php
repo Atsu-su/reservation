@@ -11,17 +11,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+
     public function up(): void
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(Item::class)->constrained();
-            $table->smallInteger('amount');
             $table->date('reservation_date');
             $table->date('borrowing_start_date');
+            $table->date('return_date')->nullable(); // 返却後にnullではなくなる
             $table->tinyInteger('status')->unsigned()->comment('0: 未貸出, 1: 貸出中, 2: 返却済み');
             $table->timestamps();
+            $table->dropColumn('created_at');
         });
     }
 

@@ -1,0 +1,46 @@
+@use "../global/mixin" as g;
+
+/* component > post */
+/* このCSSに対応したHTMLの構造が必要 */
+.c-post {
+    &:not(:first-child) {
+        margin-top: 44px;
+
+        @include g.mq(){
+            margin: 0;
+        }
+    }
+
+    p {
+        margin-top: 17px;
+        font-size: 12px;
+        line-height: 1;
+
+        @include g.mq(){
+            margin-top: 19px;
+            font-size: 14px;
+        }
+    }
+
+    h3 {
+        margin-top: 15px;
+        font-size: 18px;
+        line-height: 1;
+
+        @include g.mq(){
+            margin-top: 9px;
+        }
+
+        @include g.mq('wd'){
+            font-size: 22px;
+        }
+    }
+
+    &:last-child h3 {
+        margin-top: 18px;
+
+        @include g.mq(){
+            margin-top: 9px;
+        }
+    }
+}

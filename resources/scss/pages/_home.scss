@@ -1,0 +1,12 @@
+@use '../global/mixin' as g;
+@use "sass:math";
+
+/* page > top > top-kv */
+#home {
+    display: flex;
+
+    .reservation-table {
+        flex-grow: 1;
+    }
+}
+

@@ -1,0 +1,24 @@
+@use "../global/mixin" as g;
+@use "sass:math";
+
+/* component > kv */
+.c-kv {
+    width: 100%;
+    padding-top: 50%;
+    position: relative;
+
+    @include g.mq(){
+        padding-top: math.div(460, 1366)*100%;
+    }
+}
+
+.c-kv-title {
+    margin-left: 5%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    @include g.mq() {
+        margin-left: calc(141 / 1366)*100%;
+    }
+}

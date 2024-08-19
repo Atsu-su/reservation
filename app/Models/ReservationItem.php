@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Reservation extends Model
+class ReservationItem extends Model
 {
     use HasFactory;
 
     public $timestamps = false;
 
-    public function user()
+    public function reservation()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Reservation::class);
     }
 
-    public function reservationItems()
+    public function item()
     {
-        return $this->hasMany(ReservationItem::class);
+        return $this->belongsTo(Item::class);
     }
 }

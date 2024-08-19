@@ -1,0 +1,24 @@
+/* layout > container */
+%container {
+    margin: 0 auto;
+    width: 90%;
+}
+
+.l-container {
+    @extend %container;
+}
+
+.l-container-sm {
+    @extend %container;
+    max-width: var(--max-width-sm);
+}
+
+.l-container-md {
+    @extend %container;
+    max-width: var(--max-width-md);
+}
+
+.l-container-lg {
+    @extend %container;
+    max-width: var(--max-width-lg);
+}

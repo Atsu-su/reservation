@@ -1,0 +1,12 @@
+@use "../global/mixin" as g;
+
+/* -------------------- */
+/* フッター footer
+/* -------------------- */
+
+footer {
+    p {
+        padding-left: 0.08em;
+        text-align: center;
+    }
+}
