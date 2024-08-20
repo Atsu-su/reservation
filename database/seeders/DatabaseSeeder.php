@@ -22,13 +22,20 @@ class DatabaseSeeder extends Seeder
         // ReservationItem::factory(10)->create();
         // Item::factory(10)->create();
 
-        User::factory(10)->create();
-        Role::factory()->create(['role_name' => 'admin']);
-        Role::factory()->create(['role_name' => 'user']);
-        Administrator::factory(10)->create();
-        Inventory::factory(ItemFactory::getLength())->create();
+        // User::factory(10)->create();
+        // Role::factory()->create(['role_name' => 'admin']);
+        // Role::factory()->create(['role_name' => 'user']);
+        // Administrator::factory(10)->create();
+        // Inventory::factory(ItemFactory::getLength())->create();
 
         // 先にReservationを作った方がいいかも
-        ReservationItem::factory(100)->create();
+        // ReservationItem::factory(100)->create();
+
+        User::factory(10)->create();
+
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
     }
 }

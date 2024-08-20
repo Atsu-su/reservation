@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('reservation_items', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 20)->comment('物品名');
-            $table->boolean('is_set')->default(false)->comment('true: セット, false: セットではない');
-            $table->tinyInteger('limits')->comment('貸出上限数');
+            $table->foreignId('reservation_id')->constrained();
+            $table->foreignId('item_id')->constrained();
+            $table->smallInteger('amount');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('reservation_items');
     }
 };

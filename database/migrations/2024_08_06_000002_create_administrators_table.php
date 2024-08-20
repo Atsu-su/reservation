@@ -13,12 +13,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('administrators', function (Blueprint $table) {
-            $table->id();
-            $table->smallInteger('admin_id');
+            // 2024年の場合24001という形式で管理者IDを設定する
+            $table->integer('id');
             $table->string('name');
             $table->foreignIdFor(Role::class)->constrained();
             $table->string('password');
             $table->timestamps();
+
+            $table->primary('id');
         });
     }
 

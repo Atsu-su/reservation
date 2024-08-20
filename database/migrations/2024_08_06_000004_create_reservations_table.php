@@ -22,7 +22,9 @@ return new class extends Migration
             $table->date('return_date')->nullable(); // 返却後にnullではなくなる
             $table->tinyInteger('status')->unsigned()->comment('0: 未貸出, 1: 貸出中, 2: 返却済み');
             $table->timestamps();
-            $table->dropColumn('created_at');
+
+            // 複号キーの設定
+            $table->unique(['user_id', 'borrowing_start_date']);
         });
     }
 
