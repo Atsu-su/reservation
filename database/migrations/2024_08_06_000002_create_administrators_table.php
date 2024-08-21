@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('administrators', function (Blueprint $table) {
             // 2024年の場合24001という形式で管理者IDを設定する
-            $table->integer('id');
+            $table->id();
             $table->string('name');
             $table->foreignIdFor(Role::class)->constrained();
             $table->string('password');

@@ -19,9 +19,9 @@ class ReservationItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'reservation_id' => Reservation::factory(),
-            'item_id' => fake()->randomElement(Item::pluck('id')->toArray()),
-            'amount' => rand(1, 5),
+            // 'reservation_id' => Reservation::factory(),
+            // 'item_id' => fake()->randomElement(Item::pluck('id')->toArray()),
+            // 'amount' => rand(1, 5),
         ];
     }
 }

@@ -27,13 +27,12 @@ class AdministratorFactory extends Factory
         ];
     }
 
-    public function configure()
-    {
-        return $this->sequence(function ($sequence) {
-            return [
-                'id' => $sequence->index + 1,
-                'admin_id' => $sequence->index + 24001
-            ];
-        });
-    }
+    // public function configure()
+    // {
+    //     return $this->sequence(function ($sequence) {
+    //         return [
+    //             'id' => $sequence->index + 24001,
+    //         ];
+    //     });
+    // }
 }

@@ -10,20 +10,22 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class ItemFactory extends Factory
 {
     private static $items = [
-        '野球ボール',
-        'テニスボール',
-        'ネット一式',
-        'ビブス',
-        'テニスラケット',
-        'バトミントンラケット',
-        'バスケットボール',
-        'バレーボール',
-        'サッカーボール',
-        'フットサルボール',
-        'ハンドボール',
-        'ラグビーボール',
-        'ボールポンプ',
-        'コーン',
+        'パソコン',
+        'プリンター',
+        'コピー機',
+        'ステープラー',
+        'ホッチキス',
+        'ペン',
+        'ノート',
+        '付箋',
+        'ファイル',
+        'クリップ',
+        '電卓',
+        'デスクライト',
+        'シュレッダー',
+        'ホワイトボード',
+        'マーカー',
+        '名刺ケース',
     ];
 
     public static function getLength(): int
@@ -40,8 +42,8 @@ class ItemFactory extends Factory
     {
         return [
             'name' => fake()->unique()->randomElement(self::$items),
-            'quantity' => fake()->numberBetween(1, 15),
-            'is_set' => fake()->boolean(30),
+            'is_set' => fake()->boolean(),
+            'limits' => fake()->numberBetween(1, 15),
         ];
     }
 }

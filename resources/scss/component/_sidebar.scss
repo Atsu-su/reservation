@@ -1,0 +1,24 @@
+@use "../global/mixin" as g;
+@use "sass:math";
+
+/* component > sidebar */
+.c-sidebar {
+    width: 300px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.c-sidebar-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px
+}
+
+.c-sidebar-list li:first-child {
+    margin: 20px 0 10px;
+}
+
+.c-sidebar-list li:last-child {
+    margin: 10px 0 20px;
+}

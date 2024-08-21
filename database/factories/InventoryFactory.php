@@ -19,7 +19,7 @@ class InventoryFactory extends Factory
     {
         return [
             'item_id' => Item::factory(),
-            'stock_amount' => fake()->numberBetween(10, 20),
+            'stock_amount' => fake()->numberBetween(1, 20),
         ];
     }
 }

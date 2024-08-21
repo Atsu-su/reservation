@@ -3,17 +3,15 @@
     Home
   </x-slot>
 </x-header>
-<x-action-button />
 <div id="home" class="l-container">
-    <div class="side-bar">
-      <ul>
-        <li>マイプロフィール</li>
-        <li>貸出物品</li>
-        <li>予約ルール</li>
-      </ul>
-    </div>
-    <div class="reservation-table">
+  <div class="home-container">
+    <x-sidebar />
+    <main>
+      <div class="message-box">
+        {{ $message ?? 'メッセージはありません。' }}
+      </div>
       {{ $slot }}
-    </div>
+    </main>
+  </div>
 </div>
 <x-footer />
