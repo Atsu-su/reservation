@@ -9,8 +9,6 @@ class ReservationItem extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     public function reservation()
     {
         return $this->belongsTo(Reservation::class);

@@ -130,6 +130,10 @@ body {
 /*
 /* =========================== */
 
+/* --------------------- */
+/* 部品 parts
+/* --------------------- */
+
 /* component > button */
 .c-button {
   padding: 10px;
@@ -198,6 +202,56 @@ footer p {
   margin-bottom: 10px;
 }
 
+/* table-format */
+.c-table-format {
+  width: 100%;
+  max-width: 1080px;
+  border-spacing: 0;
+  border-collapse: separate;
+  border-radius: 10px;
+  border-top: 1px solid #dcdcdc;
+  border-left: 1px solid #dcdcdc;
+}
+
+.c-table-format th, .c-table-format td {
+  padding: 8px;
+  text-align: left;
+  border-right: 1px solid #dcdcdc;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.c-table-format thead tr {
+  background-color: #f0f8ff; /* 薄い青色の背景 */
+}
+
+.c-table-format thead tr th:first-child {
+  border-radius: 10px 0 0 0;
+}
+
+.c-table-format thead tr th:last-child {
+  border-radius: 0 10px 0 0;
+}
+
+.c-table-format tbody tr:nth-child(odd) {
+  background-color: #ffffff; /* 白色の背景（デフォルト） */
+}
+
+.c-table-format tbody tr:nth-child(even) {
+  background-color: #f0f8ff;
+}
+
+.c-table-format tbody tr:last-child td:first-child {
+  border-radius: 0 0 0 10px;
+}
+
+.c-table-format tbody tr:last-child td:last-child {
+  border-radius: 0 0 10px 0;
+}
+
+/* --------------------- */
+/* 画面レイアウト view layout
+/* --------------------- */
+
 /* component > layouts > home */
 #home .home-container {
   display: flex;
@@ -215,46 +269,17 @@ footer p {
 /* =========================== */
 
 /* reservation_table */
-#reservation_table table {
-  width: 100%;
-  border-spacing: 0;
-  border-collapse: separate;
-  border-radius: 10px;
-  border-top: 1px solid #dcdcdc;
-  border-left: 1px solid #dcdcdc;
-}
 #reservation_table table tr th:first-child {
-  width: 20%;
+  width: 40px;
 }
-#reservation_table table tr th:not(:first-child) {
-  width: 40%;
+
+#reservation_table table tr th:not(:first-child):not(:last-child) {
+  width: 200px;
 }
-#reservation_table table th, #reservation_table table td {
-  padding: 8px;
-  text-align: left;
-  border-right: 1px solid #dcdcdc;
-  border-bottom: 1px solid #dcdcdc;
-}
-#reservation_table table thead tr {
-  background-color: #f0f8ff; /* 薄い青色の背景 */
-}
-#reservation_table table thead tr th:first-child {
-  border-radius: 10px 0 0 0;
-}
-#reservation_table table thead tr th:last-child {
-  border-radius: 0 10px 0 0;
-}
-#reservation_table table tbody tr:nth-child(odd) {
-  background-color: #ffffff; /* 白色の背景（デフォルト） */
-}
-#reservation_table table tbody tr:nth-child(even) {
-  background-color: #f0f8ff;
-}
-#reservation_table table tbody tr:last-child td:first-child {
-  border-radius: 0 0 0 10px;
-}
-#reservation_table table tbody tr:last-child td:last-child {
-  border-radius: 0 0 10px 0;
+
+/* reservation_detail_table */
+#reservation_detail_table table tr th:first-child {
+  width: 250px;
 }
 
 /* =========================== */

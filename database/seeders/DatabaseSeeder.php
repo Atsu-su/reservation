@@ -22,55 +22,58 @@ class DatabaseSeeder extends Seeder
     {
         $itemLength = ItemFactory::getLength();
 
-
         // usersテーブル
-        User::factory(10)->create();
+        if (! User::first()) User::factory(10)->create();
 
         // rolesテーブル
-        foreach (['admin', 'user'] as $role) {
-            Role::create(['role_name' => $role]);
+        if (! Role::first()) {
+            foreach (['admin', 'user'] as $role) {
+                Role::create(['role_name' => $role]);
+            }
         }
 
         // administratorsテーブル
-        Administrator::factory(5)->create();
-
-        // itemsテーブル
-        // Item::factory($itemLength)->create();
+        if (! Administrator::first()) Administrator::factory(5)->create();
 
         // inventoriesテーブル
-        Inventory::factory($itemLength)->create();
+        if (! Inventory::first()) Inventory::factory($itemLength)->create();
 
         // reservationsテーブル
-        // reservation_itemsテーブル
-        $users = User::count();
+        if (! Reservation::first()) {
+            $users = User::count();
 
-        for ($i = 1; $i <= $users; $i++) {
-            $user = User::find($i);
-            for ($j = 1; $j <= rand(1,3); $j++) {
-                $reservation = $user->reservation();
-                $reservation->create(
-                    [
-                        'user_id' => $user->id,
-                        'reservation_date' => now()->add($j, 'day')->format('Y-m-d'),
-                        
-                        // borrowing_start_dateとuser_idが複合キー
-                        'borrowing_start_date' => now()->add((3 + $j), 'day')->format('Y-m-d'),
-                        'return_date' => now()->add((6 + $j), 'day')->format('Y-m-d'),
-                        'status' => 0,
-                    ]
-                );
-
-                // ここから
-                // forの外においてreservationsの数を取得して回す
-
-                $reservation2 = Reservation::find($j);
-                // 3件ずつreservation_itemsテーブルにデータを挿入
-                for ($k = 1; $k <= 3; $k++) {
-                    $reservation2->reservationItem()->create(
+            for ($i = 1; $i <= $users; $i++) {
+                $user = User::find($i);
+                for ($j = 1; $j <= rand(1,3); $j++) {
+                    $reservation = $user->reservation();
+                    $reservation->create(
                         [
-                            'reservation_id' => $reservation2->id,
+                            // borrowing_start_dateとuser_idが複合キー
+                            'user_id' => $user->id,
+                            'borrowing_start_date' => now()->add((3 + $j), 'day')->format('Y-m-d'),
+
+                            'reservation_date' => now()->add($j, 'day')->format('Y-m-d'),                        
+                            'return_date' => now()->add((6 + $j), 'day')->format('Y-m-d'),
+                            'status' => 0,
+                        ]
+                    );
+                }
+            }
+        }
+
+        // reservation_itemsテーブル
+        if (! ReservationItem::first()) {
+            $reservations = Reservation::count();
+
+            for ($i = 1; $i <= $reservations; $i++) {
+                $reservation = Reservation::find($i);
+                for ($j = 1; $j <= 3; $j++) {
+                    $reservationItem = $reservation->reservationItem();
+                    $reservationItem->create(
+                        [
+                            'reservation_id' => $reservation->id,
                             'item_id' => rand(1, $itemLength),
-                            'amount' => rand(1, 5),
+                            'amount' => rand(1, 10),
                         ]
                     );
                 }
