@@ -1,5 +1,5 @@
-<x-layouts.home>
-  <div id="reservation_table">
+<x-layouts.home :message="$message">
+  <div class="l-margintop20 id="reservation_table">
     <table class="c-table-format">
       <thead>
         <tr>

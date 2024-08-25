@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Item;
 use App\Models\Reservation;
 use App\Models\ReservationItem;
+use App\Models\User;
 
 class ReservationController extends Controller
 {
@@ -23,31 +25,89 @@ class ReservationController extends Controller
             ->orderBy('borrowing_start_date', 'asc')
             ->get(['id', 'reservation_date', 'borrowing_start_date']);
 
+        $user = User::find(self::USER);
+        $message = "ID番号:{$user->id} {$user->name}さんの貸出予約情報です。";
+
+        $data = [
+            'reservations' => $reservations,
+            'message' => $message
+        ];
 
         // viewに渡す
-        return view('reservation_table', compact('reservations'));
+        return view('reservation_table', $data);
     }
 
     /**
      * Show the form for creating a new resource.
      * 貸出物品の新規登録画面を表示
      */
-    public function date_select_create()
+    public function create1_date_items()
     {
-        return view('reservation_date_select');
+        $items = Item::select('id', 'name')->get();
+        $message = "貸出日と貸出物品を選択してください。";
+
+        $data = [
+            'items' => $items,
+            'message' => $message
+        ];
+
+        return view('create1_date_items', $data);
     }
 
-    public function item_select_create()
+    public function create2_amount(Request $request)
     {
-        // ここで貸出できないものは除外する
+        // item_idsから0である要素を除外
+        $item_ids = array_filter(
+            $request->input('item_ids'),
+            fn($item_id) => $item_id !== '0'
+        );
+
+        // 重複している値を除外
+        $item_ids = array_unique($item_ids);
+
+        // indexを0から振り直す
+        $item_ids = array_values($item_ids);
+
+        // validattion(date/items[])
+        // borrowing_start_date：（エラー）空である／過去の日付である
+        // item_ids：（エラー）空である／重複している／数値ではない
+
+        // 貸出日当日の貸出予定数を取得
+
+        // 在庫数との比較で貸出可否を決定
+
+        // （貸出可能な場合）貸出上限数との比較で貸出数を決定
+
+        // $dataの作成
+
+        // view
+        return view('create2_amount', $data);
+
         /*
+        （参考）
         select item_id, i.name, total_amount from
-            (select ri.item_id, sum(ri.amount) as total_amount 
-            from reservation_items ri 
+            (select ri.item_id, sum(ri.amount) as total_amount
+            from reservation_items ri
             inner join reservations r on ri.reservation_id = r.id
-            where r.borrowing_start_date = '2024-08-26' group by ri.item_id order by 1) tmp
+            where r.borrowing_start_date = '2024-08-28' group by ri.item_id order by 1) tmp
         inner join items i on tmp.item_id = i.id;
-        
+
+        完全版のSQL
+        select
+            tmp2.item_id,
+            tmp2.name,
+            iv.stock_amount,
+            tmp2.total_amount,
+            stock_amount - total_amount as remaining_amount
+        from
+            (select item_id, i.name, total_amount from
+                (select ri.item_id, sum(ri.amount) as total_amount
+                from reservation_items ri
+                inner join reservations r on ri.reservation_id = r.id
+                where r.borrowing_start_date = '2024-08-28' group by ri.item_id order by 1) tmp
+            inner join items i on tmp.item_id = i.id) tmp2
+        left outer join inventories iv on tmp2.item_id = iv.item_id;
+
         括弧の中のSQLの参考となるもの
         $groups = DB::table('groups')  //＄groupsは変数にいれてるだけ
            ->leftJoin('users', 'groups.id', '=', 'users.group_id')
@@ -61,12 +121,12 @@ class ReservationController extends Controller
     {
         /*
         select item_id, i.name, total_amount from
-            (select ri.item_id, sum(ri.amount) as total_amount 
-            from reservation_items ri 
+            (select ri.item_id, sum(ri.amount) as total_amount
+            from reservation_items ri
             inner join reservations r on ri.reservation_id = r.id
             where r.borrowing_start_date = '2024-08-26' group by ri.item_id order by 1) tmp
         inner join items i on tmp.item_id = i.id;
-        
+
         括弧の中のSQLの参考となるもの
         $groups = DB::table('groups')  //＄groupsは変数にいれてるだけ
            ->leftJoin('users', 'groups.id', '=', 'users.group_id')

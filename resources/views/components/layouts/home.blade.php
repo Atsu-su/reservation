@@ -5,7 +5,9 @@
 </x-header>
 <div id="home" class="l-container">
   <div class="home-container">
-    <x-sidebar />
+    <div class="sidebar-container">
+      <x-sidebar />
+    </div>
     <main>
       <div class="message-box">
         {{ $message ?? 'メッセージはありません。' }}

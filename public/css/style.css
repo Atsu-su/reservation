@@ -2,6 +2,182 @@
 
 /* =========================== */
 /*
+/* リセット reset
+/*
+/* =========================== */
+
+/* reset */
+html {
+  color: #000;
+  background: #fff;
+}
+
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+form,
+fieldset,
+legend,
+input,
+textarea,
+p,
+blockquote,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+fieldset,
+img {
+  border: 0;
+}
+
+address,
+caption,
+cite,
+code,
+dfn,
+em,
+strong,
+th,
+var {
+  font-style: normal;
+  font-weight: normal;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+caption,
+th {
+  text-align: left;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 100%;
+  font-weight: normal;
+}
+
+q:before,
+q:after {
+  content: "";
+}
+
+abbr,
+acronym {
+  border: 0;
+  font-variant: normal;
+}
+
+sup {
+  vertical-align: text-top;
+}
+
+sub {
+  vertical-align: text-bottom;
+}
+
+input,
+textarea,
+select,
+button {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  /* line-height: inherit; */
+  line-height: normal;
+  font-size: 100%;
+  border-radius: 5px;
+  border: 1px solid #333;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: inherit;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+textarea {
+  resize: vertical;
+  display: block;
+}
+
+button {
+  padding: 0;
+  cursor: pointer;
+}
+
+legend {
+  color: #000;
+}
+
+main {
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  width: 100%;
+  height: auto;
+  vertical-align: bottom;
+}
+
+svg {
+  display: block;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+iframe {
+  vertical-align: bottom;
+}
+
+/* =========================== */
+/*
 /* 共通定数 global
 /*
 /* =========================== */
@@ -35,7 +211,7 @@
 
 /* =========================== */
 /*
-/* ファウンデーション foundation
+/* ファンデーション foundation
 /*
 /* =========================== */
 
@@ -98,30 +274,9 @@ body {
   max-width: var(--max-width-lg);
 }
 
-/* layout > padding */
-.l-padding-lg, .l-padding-md {
-  padding: 69px 0 64px;
-}
-
-.l-padding-sm {
-  padding: 64px 0 64px;
-}
-@media screen and (min-width: 768px) {
-  .l-padding-sm {
-    padding: 80px 0 80px;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .l-padding-md {
-    padding: 86px 0 80px;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .l-padding-lg {
-    padding: 124px 0 118px;
-  }
+/* layout > margin */
+.l-margintop20 {
+  margin-top: 20px;
 }
 
 /* =========================== */
@@ -249,13 +404,33 @@ footer p {
 }
 
 /* --------------------- */
+/* 画面 view component
+/* --------------------- */
+
+header {
+  background-color: #f0f8ff;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+footer {
+  margin-top: 30px;
+  background-color: #f0f8ff;
+  border-top: 1px solid #dcdcdc;
+}
+
+/* --------------------- */
 /* 画面レイアウト view layout
 /* --------------------- */
 
 /* component > layouts > home */
 #home .home-container {
+  margin-top: 30px;
   display: flex;
   gap: 30px;
+}
+
+#home .sidebar-container {
+  align-items: flex-start;
 }
 
 #home main {
@@ -282,177 +457,66 @@ footer p {
   width: 250px;
 }
 
-/* =========================== */
-/*
-/* リセット reset
-/*
-/* =========================== */
-
-/* reset */
-html {
-  color: #000;
-  background: #fff;
-}
-
-body,
-div,
-dl,
-dt,
-dd,
-ul,
-ol,
-li,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-pre,
-code,
-form,
-fieldset,
-legend,
-input,
-textarea,
-p,
-blockquote,
-th,
-td {
-  margin: 0;
-  padding: 0;
-}
-
-table {
-  border-collapse: collapse;
+/* create1_date_items */
+/* c-table-format2 */
+#create1_date_items table {
+  width: 100%;
+  max-width: 650px;
   border-spacing: 0;
-  width: 100%;
+  border-collapse: separate;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
 }
 
-fieldset,
-img {
-  border: 0;
+#create1_date_items table input,
+#create1_date_items table select {
+  width: 250px;
+  height: 35px;
+  font-size: 20px;
+  vertical-align: middle;
+  text-align-last: center;
 }
 
-address,
-caption,
-cite,
-code,
-dfn,
-em,
-strong,
-th,
-var {
-  font-style: normal;
-  font-weight: normal;
+/* c-table-format2 */
+#create1_date_items table tr:not(:last-child) td {
+  border-bottom: 1px solid #dcdcdc;
 }
 
-ol,
-ul {
-  list-style: none;
+/* c-table-format2 */
+#create1_date_items table td:first-child {
+  width: 250px;
+  border-right: 1px solid #dcdcdc;
+  font-size: 18px;
+  background-color: #f0f8ff; /* 薄い青色の背景 */
 }
 
-caption,
-th {
-  text-align: left;
+#create1_date_items table tr:first-child td:first-child {
+  padding: 10px 0 10px 20px;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-size: 100%;
-  font-weight: normal;
+#create1_date_items table tr:not(:first-child) td:first-child {
+  padding: 10px 0 10px 50px;
 }
 
-q:before,
-q:after {
-  content: "";
+/* c-table-format2 */
+#create1_date_items table td:nth-child(2) {
+  text-align: center;
 }
 
-abbr,
-acronym {
-  border: 0;
-  font-variant: normal;
+/* c-table-format2 */
+#create1_date_items table tr:first-child td:first-child { /* border-radius */
+  border-radius: 10px 0 0 0;
+}
+/* c-table-format2 */
+#create1_date_items table tr:last-child td:first-child {  /* border-radius */
+  border-radius: 0 0 0 10px;
 }
 
-sup {
-  vertical-align: text-top;
+/* c-table-format2 */
+#create1_date_items button {
+  margin-left: 250px;
+  width: 200px;
 }
 
-sub {
-  vertical-align: text-bottom;
-}
+/* -------------------------------------------- */
 
-input,
-textarea,
-select,
-button {
-  color: inherit;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  font-size: 100%;
-  border-radius: 0;
-  border: none;
-  appearance: none;
-  -webkit-appearance: none;
-  background-color: inherit;
-}
-
-input,
-textarea,
-select {
-  font-size: 16px;
-}
-
-textarea {
-  resize: vertical;
-  display: block;
-}
-
-button {
-  padding: 0;
-  cursor: pointer;
-}
-
-legend {
-  color: #000;
-}
-
-main {
-  display: block;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-img {
-  width: 100%;
-  height: auto;
-  vertical-align: bottom;
-}
-
-svg {
-  display: block;
-}
-
-* {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  box-sizing: border-box;
-}
-
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-iframe {
-  vertical-align: bottom;
-}
