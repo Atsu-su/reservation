@@ -14,6 +14,13 @@ class ReservationController extends Controller
     // 仮のユーザID（ログインユーザIDとなる）
     const USER = 9;
 
+    public function mock()
+    {
+        $data = session('data');
+        $message = session('message');
+        return view('mock', compact('data', 'message'));
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -56,6 +63,7 @@ class ReservationController extends Controller
 
     public function create2_amount(Request $request)
     {
+
         // item_idsから0である要素を除外
         $item_ids = array_filter(
             $request->input('item_ids'),
@@ -68,9 +76,26 @@ class ReservationController extends Controller
         // indexを0から振り直す
         $item_ids = array_values($item_ids);
 
-        // validattion(date/items[])
-        // borrowing_start_date：（エラー）空である／過去の日付である
-        // item_ids：（エラー）空である／重複している／数値ではない
+        // リクエストにitem_idsの値を上書きする
+        $request->merge(['item_ids' => $item_ids]);
+
+        // validattion
+        $validateData = $request->validate([
+            'borrowing_start_date' => 'required|date|after_or_equal:today',
+            'item_ids' => 'required|array|filled',
+            'item_ids.*' => 'required|integer',
+        ]);
+
+        // 貸出日とユーザIDで検索してreservationsテーブルを検索し、
+        // レコードがあれば更新処理へ転送
+        if (Reservation::where('user_id', self::USER)
+            ->where('borrowing_start_date', $validateData['borrowing_start_date'])
+            ->exists()) {
+            return redirect()->route('mock')->with([
+                'data' => $validateData['borrowing_start_date'],
+                'message' => '予約日が重複しているのでリダイレクトされました。'
+            ]);
+        }
 
         // 貸出日当日の貸出予定数を取得
 
@@ -81,7 +106,11 @@ class ReservationController extends Controller
         // $dataの作成
 
         // view
-        return view('create2_amount', $data);
+        // return view('create2_amount', $data);
+        return view('mock', [
+            'data' => 'dataなし',
+            'message' => 'create2_amount正常終了'
+        ]);
 
         /*
         （参考）

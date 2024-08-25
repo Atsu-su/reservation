@@ -9,7 +9,7 @@
 /* reset */
 html {
   color: #000;
-  background: #fff;
+  background: var(--color-button-white);
 }
 
 body,
@@ -116,7 +116,7 @@ button {
   line-height: normal;
   font-size: 100%;
   border-radius: 5px;
-  border: 1px solid #333;
+  border: 1px solid var(--color-text-dark);
   appearance: none;
   -webkit-appearance: none;
   background-color: inherit;
@@ -182,31 +182,35 @@ iframe {
 /*
 /* =========================== */
 
-/* global > color */
+/* color */
 :root {
-  --color-bg-primary: #524433;
-  --color-bg-secondary: #efede9;
-  --color-bg-black: #000;
-  --color-bg-white: #fff;
-  --color-border-black: #000;
-  --color-border-redishblack: #707070;
-  --color-border-white: #fff;
-  --color-font-primary: #524433;
-  --color-font-white: #fff;
-  --color-font-base: #000;
+  --color-text-dark: #333;
+  --color-border: #dcdcdc;
+  --color-border-light: #969595;
+  --color-border-light-red: #ff6060;
+  --color-button-blue: #c0f0ff;
+  --color-button-white: #fff;
+  --color-background-light: #f0f0f0;
+  --color-background-blue-light: #f0f8ff;
+  --color-background-white: #fff;
 }
 
-/* global > content-width */
+/* content-width */
 :root {
   --max-width-sm: 960px;
   --max-width-md: 1080px;
   --max-width-lg: 1200px;
 }
 
-/* global > font */
+/* font */
 :root {
   --font-family-jp: "Noto Sans JP", sans-serif;
   --font-family-en: "Montserrat", sans-serif;
+}
+
+/* img */
+:root {
+  --img-exclaimation: url(../img/exclamation.svg);
 }
 
 /* =========================== */
@@ -219,15 +223,10 @@ iframe {
 body {
   font-family: var(--font-family-jp);
   line-height: 1.8;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: var(--font-weight-regular);
   color: var(--color-font-base);
   letter-spacing: 0.08em;
-}
-@media screen and (min-width: 768px) {
-  body {
-    font-size: 16px;
-  }
 }
 
 /* =========================== */
@@ -281,13 +280,9 @@ body {
 
 /* =========================== */
 /*
-/* コンポーネント components
+/* cssコンポーネント
 /*
 /* =========================== */
-
-/* --------------------- */
-/* 部品 parts
-/* --------------------- */
 
 /* component > button */
 .c-button {
@@ -296,16 +291,16 @@ body {
   display: block;
   font-weight: bold;
   text-align: center;
-  border: 1px solid #969595;
+  border: 1px solid var(--color-border-light);
   border-radius: 5px;
 }
 
 .c-button--blue {
-  background-color: #c0f0ff;
+  background-color: var(--color-button-blue);
 }
 
 .c-button--white {
-  background-color: #fff;
+  background-color: var(--color-button-white);
 }
 
 .c-button a:hover {
@@ -321,7 +316,7 @@ header h1 {
   padding-left: 20px;
   font-size: 2rem;
   font-weight: bold;
-  color: #333;
+  color: var(--color-text-dark);
 }
 
 /* componet > footer */
@@ -333,8 +328,8 @@ footer p {
 /* component > sidebar */
 .c-sidebar {
   width: 230px;
-  background-color: #f0f0f0;
-  border: 1px solid #dcdcdc;
+  background-color: var(--color-background-light);
+  border: 1px solid var(--color-border);
   border-radius: 5px;
 }
 
@@ -358,25 +353,29 @@ footer p {
 }
 
 /* table-format */
+/* ------------------ */
+/* reservation_table
+/* reservation_detail_table
+/* ------------------ */
 .c-table-format {
   width: 100%;
   max-width: 1080px;
   border-spacing: 0;
   border-collapse: separate;
   border-radius: 10px;
-  border-top: 1px solid #dcdcdc;
-  border-left: 1px solid #dcdcdc;
+  border-top: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-border);
 }
 
 .c-table-format th, .c-table-format td {
-  padding: 8px;
+  padding: 10px 8px;
   text-align: left;
-  border-right: 1px solid #dcdcdc;
-  border-bottom: 1px solid #dcdcdc;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .c-table-format thead tr {
-  background-color: #f0f8ff; /* 薄い青色の背景 */
+  background-color: var(--color-background-blue-light); /* 薄い青色の背景 */
 }
 
 .c-table-format thead tr th:first-child {
@@ -388,11 +387,11 @@ footer p {
 }
 
 .c-table-format tbody tr:nth-child(odd) {
-  background-color: #ffffff; /* 白色の背景（デフォルト） */
+  background-color: var(--color-background-white); /* 白色の背景（デフォルト） */
 }
 
 .c-table-format tbody tr:nth-child(even) {
-  background-color: #f0f8ff;
+  background-color: var(--color-background-blue-light);
 }
 
 .c-table-format tbody tr:last-child td:first-child {
@@ -403,26 +402,119 @@ footer p {
   border-radius: 0 0 10px 0;
 }
 
-/* --------------------- */
-/* 画面 view component
-/* --------------------- */
-
-header {
-  background-color: #f0f8ff;
-  border-bottom: 1px solid #dcdcdc;
+/* c-table-format2 */
+/* ------------------ */
+/* create1_date_items
+/* create2_amount
+/* ------------------ */
+.c-table-format2 {
+  width: 100%;
+  max-width: 650px;
+  border-spacing: 0;
+  border-collapse: separate;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
 }
 
+.c-table-format2 input,
+.c-table-format2 select {
+  width: 250px;
+  height: 35px;
+  font-size: 20px;
+  vertical-align: middle;
+  text-align-last: center;
+}
+
+.c-table-format2 tr:not(:last-child) td {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.c-table-format2 td:first-child {
+  width: 250px;
+  border-right: 1px solid var(--color-border);
+  font-size: 18px;
+  background-color: var(--color-background-blue-light); /* 薄い青色の背景 */
+}
+
+.c-table-format2 tr td:first-child {
+  padding: 10px 0;
+}
+
+.c-table-format2 td {
+  text-align: center;
+}
+
+.c-table-format2 tr:first-child td:first-child { /* border-radius */
+  border-radius: 10px 0 0 0;
+}
+
+.c-table-format2 tr:last-child td:first-child {  /* border-radius */
+  border-radius: 0 0 0 10px;
+}
+
+#create1_date_items button {
+  margin-left: 250px;
+  width: 200px;
+}
+
+/* =========================== */
+/*
+/* bladeコンポーネント
+/*
+/* =========================== */
+
+/* --------------------- */
+/* コンポーネント component
+/* --------------------- */
+
+/* header */
+header {
+  background-color: var(--color-background-blue-light);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* footer */
 footer {
   margin-top: 30px;
-  background-color: #f0f8ff;
-  border-top: 1px solid #dcdcdc;
+  background-color: var(--color-background-blue-light);
+  border-top: 1px solid var(--color-border);
+}
+
+/* error */
+.error-box {
+  padding: 14px;
+  border: 1px solid var(--color-border-light-red);
+  border-radius: 5px;
+}
+
+.error-box li {
+  padding-left: 32px;
+  position: relative;
+  font-weight: bold;
+}
+
+.error-box li:before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  background-image: var(--img-exclaimation);
+  background-size: contain;
+}
+
+.error-box li + li {
+  margin-top: 5px;
 }
 
 /* --------------------- */
-/* 画面レイアウト view layout
+/* レイアウト component > layout
 /* --------------------- */
 
-/* component > layouts > home */
+/* home */
 #home .home-container {
   margin-top: 30px;
   display: flex;
@@ -458,16 +550,6 @@ footer {
 }
 
 /* create1_date_items */
-/* c-table-format2 */
-#create1_date_items table {
-  width: 100%;
-  max-width: 650px;
-  border-spacing: 0;
-  border-collapse: separate;
-  border-radius: 10px;
-  border: 1px solid #dcdcdc;
-}
-
 #create1_date_items table input,
 #create1_date_items table select {
   width: 250px;
@@ -477,46 +559,20 @@ footer {
   text-align-last: center;
 }
 
-/* c-table-format2 */
-#create1_date_items table tr:not(:last-child) td {
-  border-bottom: 1px solid #dcdcdc;
-}
-
-/* c-table-format2 */
-#create1_date_items table td:first-child {
+/* create2_amount */
+#create2_amount input,
+#create2_amount select {
   width: 250px;
-  border-right: 1px solid #dcdcdc;
-  font-size: 18px;
-  background-color: #f0f8ff; /* 薄い青色の背景 */
+  height: 35px;
+  font-size: 20px;
+  vertical-align: middle;
+  text-align-last: center;
 }
 
-#create1_date_items table tr:first-child td:first-child {
+#create2_amount tr:first-child td:first-child {
   padding: 10px 0 10px 20px;
 }
 
-#create1_date_items table tr:not(:first-child) td:first-child {
+#create2_amount tr:not(:first-child) td:first-child {
   padding: 10px 0 10px 50px;
 }
-
-/* c-table-format2 */
-#create1_date_items table td:nth-child(2) {
-  text-align: center;
-}
-
-/* c-table-format2 */
-#create1_date_items table tr:first-child td:first-child { /* border-radius */
-  border-radius: 10px 0 0 0;
-}
-/* c-table-format2 */
-#create1_date_items table tr:last-child td:first-child {  /* border-radius */
-  border-radius: 0 0 0 10px;
-}
-
-/* c-table-format2 */
-#create1_date_items button {
-  margin-left: 250px;
-  width: 200px;
-}
-
-/* -------------------------------------------- */
-

@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReservationController;
 
+// mockのルート
+Route::get('/mock', [ReservationController::class, 'mock'])->name('mock');
+
 Route::get('/home', [ReservationController::class, 'index'])->name('home');
 Route::get('/home/create1', [ReservationController::class, 'create1_date_items'])->name('home.create1');
 Route::get('/home/create2', function() {

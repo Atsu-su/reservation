@@ -12,6 +12,9 @@
       <div class="message-box">
         {{ $message ?? 'メッセージはありません。' }}
       </div>
+      @if ($errors->any())
+      <x-error />
+      @endif
       {{ $slot }}
     </main>
   </div>
