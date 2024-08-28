@@ -52,7 +52,8 @@ class ItemFactory extends Factory
 
         return [
             'name' => $item,
-            'is_set' => fake()->boolean(),
+            // 'is_set' => fake()->boolean(),
+            'stock_amount' => fake()->numberBetween(10, 30),
             'limits' => fake()->numberBetween(1, 15),
         ];
     }

@@ -15,6 +15,9 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+
+    const ITEMS_PER_USER = 3;
+
     /**
      * Seed the application's database.
      */
@@ -36,7 +39,7 @@ class DatabaseSeeder extends Seeder
         if (! Administrator::first()) Administrator::factory(5)->create();
 
         // inventoriesテーブル
-        if (! Inventory::first()) Inventory::factory($itemLength)->create();
+        if (! Item::first()) Item::factory($itemLength)->create();
 
         // reservationsテーブル
         if (! Reservation::first()) {
@@ -44,7 +47,7 @@ class DatabaseSeeder extends Seeder
 
             for ($i = 1; $i <= $users; $i++) {
                 $user = User::find($i);
-                for ($j = 1; $j <= rand(1,3); $j++) {
+                for ($j = 1; $j <= self::ITEMS_PER_USER; $j++) {
                     $reservation = $user->reservation();
                     $reservation->create(
                         [
