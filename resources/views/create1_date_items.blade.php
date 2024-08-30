@@ -1,4 +1,4 @@
-<x-layouts.home :message="$message">
+<x-layouts.home :title="$title" :message_title="$message_title ?? ''" :message="$message">
   <div class="l-margintop20 " id="create1_date_items">
     <form action="{{ route('home.create2') }}" method="post">
       @csrf
@@ -23,7 +23,7 @@
         </tr>
         @endfor
       </table>
-      <button class="l-margintop20 button c-button" type="submit"><a>在庫確認</a></button>
+      <button class="l-margintop20 c-button c-button--w200px c-create-button" type="submit"><a>在庫確認</a></button>
     </form>
   </div>
 </x-layouts.home>

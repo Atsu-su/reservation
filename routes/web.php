@@ -12,6 +12,6 @@ Route::get('/home/create2', function() {
     $message = '貸出物品の数量を入力してください。';
     return view('create2_amount', compact('message'));});
 Route::post('/home/create2', [ReservationController::class, 'create2_amount'])->name('home.create2');
-Route::get('/home/{id}', [ReservationController::class, 'show'])->name('home.show');
+Route::get('/home/{id}', [ReservationController::class, 'show_reservation'])->name('home.show_reservation');
 
 // [ReservationController::class, 'show'])->name('home.show');

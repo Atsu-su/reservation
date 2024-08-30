@@ -188,9 +188,9 @@ iframe {
   --color-border: #dcdcdc;
   --color-border-light: #969595;
   --color-border-light-red: #ff6060;
-  --color-button-blue: #c0f0ff;
+  --color-button-blue: linear-gradient(90deg, #a1c4fd 0%, #c2e9fb 100%);
   --color-button-white: #fff;
-  --color-button-pinkish: #fcd2de;
+  --color-button-pinkish: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 100%);
   --color-background-light: #f0f0f0;
   --color-background-blue-light: #f0f8ff;
   --color-background-white: #fff;
@@ -272,7 +272,6 @@ iframe {
 /* component > button */
 .c-button {
   padding: 10px;
-  width: 80%;
   display: block;
   font-weight: bold;
   text-align: center;
@@ -280,8 +279,16 @@ iframe {
   border-radius: 5px;
 }
 
+.c-button--w80pct {
+  width: 80%;
+}
+
+.c-button--w200px {
+  width: 200px;
+}
+
 .c-button--blue {
-  background-color: var(--color-button-blue);
+  background: var(--color-button-blue);
 }
 
 .c-button--white {
@@ -289,7 +296,7 @@ iframe {
 }
 
 .c-button--pinkish {
-  background-color: var(--color-button-pinkish);
+  background: var(--color-button-pinkish);
 }
 
 .c-button a:hover {
@@ -427,9 +434,13 @@ iframe {
   border-radius: 0 0 0 10px;
 }
 
-#create1_date_items button {
+/* c-create-button */
+/* ------------------ */
+/* create1_date_items
+/* create2_amount
+/* ------------------ */
+.c-create-button {
   margin-left: 250px;
-  width: 200px;
 }
 
 /* =========================== */
@@ -523,7 +534,7 @@ footer p {
 }
 
 /* --------------------- */
-/* レイアウト component > layout
+/* レイアウト components > layout
 /* --------------------- */
 
 #home {
@@ -540,6 +551,10 @@ footer p {
 
 #home main {
   flex-grow: 1
+}
+
+#home .message-box h1 {
+  font-size: 24px;
 }
 
 /* =========================== */

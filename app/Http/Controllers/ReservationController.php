@@ -12,11 +12,22 @@ use App\Models\User;
 
 class ReservationController extends Controller
 {
+    // タイトル
+    private $title = [
+        'home' => ['title' => 'Home'],
+        'create' => ['title' => '新規予約'],
+        'update' => ['title' => '予約変更'],
+        'show_stock' => ['title' => '在庫確認'],
+        'show_reservation' => ['title' => '予約確認'],
+    ];
 
+    // -------------------------------------
+    // テスト用の定数
     // 仮のユーザID（ログインユーザIDとなる）
     const USER = 9;
     // 仮の予約日付
     const RESERVATION_DATE = '2024-09-02';
+    // -------------------------------------
 
     public function mockView($data = null, $message = null, $collections = null)
     {
@@ -41,6 +52,9 @@ class ReservationController extends Controller
      */
     public function index()
     {
+        // タイトル
+        $data = $this->title['home'];
+
         // 貸出情報（reservationsテーブルのid/borrowing_start_date/reservation_date）
         $reservations = Reservation::where('user_id', self::USER)
             ->orderBy('reservation_date', 'asc')
@@ -50,7 +64,7 @@ class ReservationController extends Controller
         $user = User::find(self::USER);
         $message = "ID番号:{$user->id} {$user->name}さんの貸出予約情報です。";
 
-        $data = [
+        $data += [
             'reservations' => $reservations,
             'message' => $message
         ];
@@ -65,10 +79,13 @@ class ReservationController extends Controller
      */
     public function create1_date_items()
     {
+        // タイトル
+        $data = $this->title['create'];
+
         $items = Item::select('id', 'name')->get();
         $message = "貸出日と貸出物品を選択してください。";
 
-        $data = [
+        $data += [
             'items' => $items,
             'message' => $message
         ];
@@ -78,6 +95,8 @@ class ReservationController extends Controller
 
     public function create2_amount(Request $request)
     {
+        // タイトル
+        $data = $this->title['create'];
 
         // item_idsから0である要素を除外
         $item_ids = array_filter(
@@ -103,6 +122,13 @@ class ReservationController extends Controller
             'item_ids.*' => 'required|integer',
         ]);
 
+        // 変数定義
+        $date = $validated['borrowing_start_date']; // 予約日
+        $item_ids = $validated['item_ids'];         // 貸出物品ID
+        $result = [];       // viewに渡す配列
+        $aggregate = null;  // 集計テーブルのクエリ
+        $record = null;     // 集計テーブルのレコード
+        $item = null;       // 集計テーブルにまだ存在していない物品（その日はまだ予約が入っていない物品）
 
         // ---------------------------------------------------------
         // 指定された日付で既に予約されている場合、更新処理へリダイレクト
@@ -122,14 +148,6 @@ class ReservationController extends Controller
         // ---------------------------------------------------------
         // 指定された日付に予約がない場合、貸出可能数を決定する
         // ---------------------------------------------------------
-
-        // 変数定義
-        $date = $validated['borrowing_start_date']; // 予約日
-        $item_ids = $validated['item_ids'];         // 貸出物品ID
-        $result = [];       // viewに渡す配列
-        $aggregate = null;  // 集計テーブルのクエリ
-        $record = null;     // 集計テーブルのレコード
-        $item = null;       // 集計テーブルにまだ存在していない物品（その日はまだ予約が入っていない物品）
 
         // 他で使う場合はメソッドにする
         foreach ($item_ids as $item_id) {
@@ -170,8 +188,6 @@ class ReservationController extends Controller
             'result' => $result,
             'message' => '貸出数を入力してください。',
         ];
-
-        dd($data);
 
         // view
         return view('create2_amount', $data);
@@ -254,8 +270,11 @@ class ReservationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show_reservation(string $id)
     {
+        // タイトル
+        $data = $this->title['show_reservation'];
+
         // 貸出物品の詳細を表示
         $reservationDate = Reservation::where('id', $id)->value('reservation_date');
         $reservationItems = ReservationItem::with('item')
@@ -266,7 +285,7 @@ class ReservationController extends Controller
         // message
         $message = "貸出日は{$reservationDate}です。";
 
-        $data = [
+        $data += [
             'message' => $message,
             'reservationItems' => $reservationItems
         ];

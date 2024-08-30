@@ -1,4 +1,4 @@
-<x-layouts.home :message="$message">
+<x-layouts.home :title="$title" :message_title="$message_title ?? ''" :message="$message">
   <div class="l-margintop20 id="reservation_table">
     <table class="c-table-format">
       <thead>
@@ -15,7 +15,7 @@
           <td>{{ $reservation->id }}</td>
           <td>{{ $reservation->reservation_date }}</td>
           <td>{{ $reservation->borrowing_start_date }}</td>
-          <td><a href="{{ route('home.show', ['id' => $reservation->id]) }}">詳細へ</a></td>
+          <td><a href="{{ route('home.show_reservation', ['id' => $reservation->id]) }}">詳細へ</a></td>
         </tr>
       @endforeach
       </tbody>

@@ -1,4 +1,4 @@
-<x-layouts.home :message="$message">
+<x-layouts.home :title="$title" :message_title="$message_title ?? ''" :message="$message">
   <div id="reservation_detail_table">
     <table class="c-table-format">
       <thead>

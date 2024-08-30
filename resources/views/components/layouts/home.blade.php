@@ -1,6 +1,6 @@
 <x-header>
   <x-slot name="title">
-    Home
+    {{ $title ?? '予約' }}
   </x-slot>
 </x-header>
 <div id="home" class="l-container">
@@ -9,7 +9,10 @@
   </div>
   <main>
     <div class="message-box">
-      {{ $message ?? 'メッセージはありません。' }}
+      @if (! empty($message_title))
+      <h1>{{ $message_title }}</h1>
+      @endif
+      <p>{{ $message ?? 'メッセージはありません。' }}</p>
     </div>
     @if ($errors->any())
     <x-error />
