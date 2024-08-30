@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Administrator;
-use App\Models\Inventory;
 use App\Models\Item;
+use App\Models\LendingAggregate;
 use App\Models\Role;
 use App\Models\ReservationItem;
 use App\Models\Reservation;
@@ -12,6 +12,7 @@ use App\Models\User;
 use Database\Factories\ItemFactory;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -76,11 +77,35 @@ class DatabaseSeeder extends Seeder
                         [
                             'reservation_id' => $reservation->id,
                             'item_id' => rand(1, $itemLength),
-                            'amount' => rand(1, 10),
+                            'amount' => rand(1, 5),
                         ]
                     );
                 }
             }
+        }
+
+        // lending_aggregatesテーブル
+        if (! LendingAggregate::first()) {
+            // 集計データを取得
+            $aggregates = DB::table('reservation_items as ri')
+            ->join('reservations as r', 'ri.reservation_id', '=', 'r.id')
+            ->groupBy('ri.item_id', 'r.borrowing_start_date')
+            ->select('r.borrowing_start_date', 'ri.item_id',  DB::raw("sum(ri.amount) as total_amount"))
+            ->orderBy('r.borrowing_start_date')
+            ->orderBy('ri.item_id')
+            ->get();
+
+            // 集計データをlending_aggregatesテーブルに挿入
+            foreach ($aggregates as $aggregate) {
+                LendingAggregate::create(
+                    [
+                        'borrowing_start_date' => $aggregate->borrowing_start_date,
+                        'item_id' => $aggregate->item_id,
+                        'total_amount' => $aggregate->total_amount,
+                    ]
+                );
+            }
+
         }
     }
 }

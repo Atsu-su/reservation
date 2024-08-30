@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 20)->comment('物品名');
             $table->boolean('is_set')->default(false)->comment('true: セット, false: セットではない');
-            $table->tinyInteger('limits')->comment('貸出上限数');
+            $table->tinyInteger('limit')->comment('貸出上限数');
             $table->timestamps();
         });
     }

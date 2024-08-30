@@ -14,9 +14,9 @@ class Item extends Model
         return $this->hasMany(Reservation::class);
     }
 
-    public function inventries()
+    public function lendingAggregate()
     {
-        return $this->hasOne(Inventry::class);
+        return $this->hasMany(LendingAggregate::class);
     }
 
 }

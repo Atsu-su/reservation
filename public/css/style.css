@@ -190,6 +190,7 @@ iframe {
   --color-border-light-red: #ff6060;
   --color-button-blue: #c0f0ff;
   --color-button-white: #fff;
+  --color-button-pinkish: #fcd2de;
   --color-background-light: #f0f0f0;
   --color-background-blue-light: #f0f8ff;
   --color-background-white: #fff;
@@ -211,22 +212,6 @@ iframe {
 /* img */
 :root {
   --img-exclaimation: url(../img/exclamation.svg);
-}
-
-/* =========================== */
-/*
-/* ファンデーション foundation
-/*
-/* =========================== */
-
-/* foundation > base */
-body {
-  font-family: var(--font-family-jp);
-  line-height: 1.8;
-  font-size: 18px;
-  font-weight: var(--font-weight-regular);
-  color: var(--color-font-base);
-  letter-spacing: 0.08em;
 }
 
 /* =========================== */
@@ -303,26 +288,16 @@ body {
   background-color: var(--color-button-white);
 }
 
+.c-button--pinkish {
+  background-color: var(--color-button-pinkish);
+}
+
 .c-button a:hover {
   opacity: 0.3;
 }
 
 .c-button a {
   display: block;
-}
-
-/* component > header */
-header h1 {
-  padding-left: 20px;
-  font-size: 2rem;
-  font-weight: bold;
-  color: var(--color-text-dark);
-}
-
-/* componet > footer */
-footer p {
-  padding-left: 0.08em;
-  text-align: center;
 }
 
 /* component > sidebar */
@@ -348,7 +323,7 @@ footer p {
   margin: 10px 0 20px;
 }
 
-.c-sidebar li:first-child {
+.c-sidebar li:nth-child(2)  {
   margin-bottom: 10px;
 }
 
@@ -459,6 +434,23 @@ footer p {
 
 /* =========================== */
 /*
+/* ファンデーション foundation
+/*
+/* =========================== */
+
+/* foundation > base */
+body {
+  /* min-height: 100vh; */
+  font-family: var(--font-family-jp);
+  line-height: 1.8;
+  font-size: 18px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-font-base);
+  letter-spacing: 0.08em;
+}
+
+/* =========================== */
+/*
 /* bladeコンポーネント
 /*
 /* =========================== */
@@ -469,15 +461,35 @@ footer p {
 
 /* header */
 header {
+  height: 60px;
+  display: flex;
+  align-items: center;
   background-color: var(--color-background-blue-light);
   border-bottom: 1px solid var(--color-border);
 }
 
+/* component > header */
+header h1 {
+  padding-left: 20px;
+  color: var(--color-text-dark);
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
 /* footer */
 footer {
-  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
   background-color: var(--color-background-blue-light);
   border-top: 1px solid var(--color-border);
+}
+
+footer p {
+  padding-left: 0.08em;
+  line-height: 1;
 }
 
 /* error */
@@ -514,11 +526,12 @@ footer {
 /* レイアウト component > layout
 /* --------------------- */
 
-/* home */
-#home .home-container {
-  margin-top: 30px;
+#home {
+  padding: 30px 0;
+  min-height: calc(100vh - 30px - 60px);
   display: flex;
   gap: 30px;
+  overflow: hidden;
 }
 
 #home .sidebar-container {

@@ -48,13 +48,13 @@ class ItemFactory extends Factory
     public function definition(): array
     {
         $item = self::$items[self::$index];
-        self::$index = (self::$index + 1) % self::getLength();
+        self::$index = (self::$index + 1);
 
         return [
             'name' => $item,
             // 'is_set' => fake()->boolean(),
             'stock_amount' => fake()->numberBetween(10, 30),
-            'limits' => fake()->numberBetween(1, 15),
+            'limit' => self::$index,
         ];
     }
 }
