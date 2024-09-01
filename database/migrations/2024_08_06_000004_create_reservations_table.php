@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('reservation_date');
             $table->date('borrowing_start_date');
             $table->date('return_date')->nullable(); // 返却後にnullではなくなる
-            $table->tinyInteger('status')->unsigned()->comment('0: 未貸出, 1: 貸出中, 2: 返却済み');
+            $table->tinyInteger('status')->unsigned()->default(0)->comment('0: 未貸出, 1: 貸出中, 2: 返却済み');
             $table->timestamps();
 
             // 複号キーの設定

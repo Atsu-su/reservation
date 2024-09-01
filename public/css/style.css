@@ -188,12 +188,14 @@ iframe {
   --color-border: #dcdcdc;
   --color-border-light: #969595;
   --color-border-light-red: #ff6060;
+  --color-border-green: #17a517;
   --color-button-blue: linear-gradient(90deg, #a1c4fd 0%, #c2e9fb 100%);
   --color-button-white: #fff;
   --color-button-pinkish: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 100%);
   --color-background-light: #f0f0f0;
   --color-background-blue-light: #f0f8ff;
   --color-background-white: #fff;
+  --color-background-red: #ffddde;
 }
 
 /* content-width */
@@ -259,8 +261,12 @@ iframe {
 }
 
 /* layout > margin */
-.l-margintop20 {
+.l-margintop20px {
   margin-top: 20px;
+}
+
+.l-margintop20pxauto0 {
+  margin: 20px auto 0;
 }
 
 /* =========================== */
@@ -274,6 +280,7 @@ iframe {
   padding: 10px;
   display: block;
   font-weight: bold;
+  letter-spacing: 0.08em;
   text-align: center;
   border: 1px solid var(--color-border-light);
   border-radius: 5px;
@@ -338,6 +345,7 @@ iframe {
 /* ------------------ */
 /* reservation_table
 /* reservation_detail_table
+/* create3_result_table
 /* ------------------ */
 .c-table-format {
   width: 100%;
@@ -360,6 +368,10 @@ iframe {
   background-color: var(--color-background-blue-light); /* 薄い青色の背景 */
 }
 
+.c-table-format--background-red thead tr {
+  background-color: var(--color-background-red);
+}
+
 .c-table-format thead tr th:first-child {
   border-radius: 10px 0 0 0;
 }
@@ -374,6 +386,10 @@ iframe {
 
 .c-table-format tbody tr:nth-child(even) {
   background-color: var(--color-background-blue-light);
+}
+
+.c-table-format--background-red tbody tr:nth-child(even) {
+  background-color: var(--color-background-red);
 }
 
 .c-table-format tbody tr:last-child td:first-child {
@@ -564,17 +580,61 @@ footer p {
 /* =========================== */
 
 /* reservation_table */
-#reservation_table table tr th:first-child {
-  width: 40px;
+#reservation_table table {
+  table-layout: fixed;
 }
 
-#reservation_table table tr th:not(:first-child):not(:last-child) {
-  width: 200px;
+#reservation_table table tr th:first-child {
+  width: 180px;
+  position: relative;
+}
+
+#reservation_table table tr th:first-child::after {
+  content: "詳細はクリック";
+  padding-left: 4px;
+  position: absolute;
+  top: 10px;
+  left: 40px;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  border: 2px solid var(--color-border-green);
+  background-color: var(--color-background-white);
+  border-radius: 5px;
+}
+
+#reservation_table table tr td:first-child {
+  padding: 0;
+}
+
+#reservation_table table tr td:first-child a {
+  padding: 10px 8px;
+  width: 100%;
+  display: block;
+  color: rgb(0, 98, 255);
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+#reservation_table table tr td:first-child a:hover {
+  opacity: 0.5;
 }
 
 /* reservation_detail_table */
+#reservation_detail_table {
+  width: 60%;
+}
+
+#reservation_detail_table table {
+  table-layout: fixed;
+}
+
 #reservation_detail_table table tr th:first-child {
-  width: 250px;
+  width: 10%;
+}
+
+#reservation_detail_table table tr > *:nth-child(2) {
+  width: 60%;
 }
 
 /* create1_date_items */
@@ -598,9 +658,54 @@ footer p {
 }
 
 #create2_amount tr:first-child td:first-child {
-  padding: 10px 0 10px 20px;
+  padding: 10px 0 10px;
 }
 
-#create2_amount tr:not(:first-child) td:first-child {
-  padding: 10px 0 10px 50px;
+/* create3_result_table */
+#create3_result_table .reservation-failure-message {
+  padding: 14px;
+  border: 1px solid var(--color-border-light-red);
+  border-radius: 5px;
+}
+
+#create3_result_table .reservation-failure-message p {
+  padding: 18px 0 18px 32px;
+  position: relative;
+  font-weight: bold;
+  line-height: 1;
+}
+
+#create3_result_table .reservation-failure-message p:before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  background-image: var(--img-exclaimation);
+  background-size: contain;
+}
+
+#create3_result_table h2 {
+  font-size: 24px;
+}
+
+#create3_result_table {
+  width: 60%;
+}
+
+#create3_result_table table {
+  table-layout: fixed;
+}
+
+#create3_result_table table tr th:first-child {
+  width: 10%;
+}
+
+#create3_result_table .failure-table p > a {
+  color: rgb(0, 98, 255);
+  font-weight: bold;
+  text-decoration: underline;
 }

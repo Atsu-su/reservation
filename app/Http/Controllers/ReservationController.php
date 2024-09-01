@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 use App\Models\Item;
 use App\Models\LendingAggregate;
 use App\Models\Reservation;
@@ -21,14 +22,16 @@ class ReservationController extends Controller
         'show_reservation' => ['title' => '予約確認'],
     ];
 
-    // -------------------------------------
+    // ============================================================================
+    // 検証用の設定
+
     // テスト用の定数
     // 仮のユーザID（ログインユーザIDとなる）
-    const USER = 9;
+    const USER = 8;
     // 仮の予約日付
-    const RESERVATION_DATE = '2024-09-02';
-    // -------------------------------------
+    const RESERVATION_DATE = '2024-09-04';
 
+    // viewのモック
     public function mockView($data = null, $message = null, $collections = null)
     {
         return view('mock', [
@@ -39,13 +42,14 @@ class ReservationController extends Controller
         ]);
     }
 
-    // リダイレクト用のモック
+    // リダイレクトのモック
     public function mock()
     {
         $data = session('data');
         $message = session('message');
         return view('mock', compact('data', 'message'));
     }
+    // ============================================================================
 
     /**
      * Display a listing of the resource.
@@ -98,9 +102,11 @@ class ReservationController extends Controller
         // タイトル
         $data = $this->title['create'];
 
+        $item_ids = $request->query('item_ids');
+
         // item_idsから0である要素を除外
         $item_ids = array_filter(
-            $request->input('item_ids'),
+            $item_ids,
             fn($item_id) => $item_id !== '0'
         );
 
@@ -119,6 +125,12 @@ class ReservationController extends Controller
             'borrowing_start_date' => 'required|date',
             // 'borrowing_start_date' => 'required|date|after_or_equal:today',
             'item_ids' => 'required|array|filled',
+
+            // ===============================================
+            // *** 作成予定 ***
+            // カスタムバリデーションを追加
+            // item_idsの要素一つ一つのerrorが出力されるので見栄えが悪い
+            // ===============================================
             'item_ids.*' => 'required|integer',
         ]);
 
@@ -153,7 +165,7 @@ class ReservationController extends Controller
         foreach ($item_ids as $item_id) {
             // テスト用データ
             $aggregate = LendingAggregate::diff(self::RESERVATION_DATE, $item_id);
-            // $aggregate = LendingAggregate::diff($date, $item_id)->get();
+
             if ($aggregate->exists()) {
                 $record = $aggregate->first();
                 if ($record->diff > 0) {
@@ -183,7 +195,19 @@ class ReservationController extends Controller
             }
         }
 
-        $data =[
+        // =============================================
+        // *** 作成予定 ***
+        // 全ての物品が貸出不可の場合の処理
+        // 戻るボタンを表示する
+        // =============================================
+
+        // セッションに保存
+        session([
+            'date' => $date,
+            'item_ids' => $item_ids
+        ]);
+
+        $data += [
             'date' => $date,
             'result' => $result,
             'message' => '貸出数を入力してください。',
@@ -198,75 +222,151 @@ class ReservationController extends Controller
      */
     public function store(Request $request)
     {
+        $data =  $this->title['create'];
+
+        // =============================================
+        // *** 対応予定 ***
+        // 戻るボタンが使われた場合のエラーはどう対処する？
+        // =============================================
+
         // バリデーション
+        $validated = $request->validate([
+            'amount' => 'required|array|filled',
+            'amount.*' => 'required|integer|min:1',
+        ]);
+
+        // 変数定義
+        $date = session('date');
+        $item_ids = session('item_ids');
+        $amount = $validated['amount'];
+        $reservation = null;
+        $aggregate = null;
+        $out_of_stocks = [];
+        $error_message = '';
+        $items =  null;
 
         // トランザクションの開始
+        DB::beginTransaction();
 
-        // try {
-        //
-        // reservationsテーブルに予約情報を登録
-        // $reservation = Reservation::create([...]);
-        //
-        // 以後、$reservation->idで予約IDを取得できる
-        //
-        // foreach (item_ids as item_id)
-        //     total_amouutにamountを加算してstockを超えないか確認
-        //
-        //     ※diffはstock - total_amount
-        //
-        //     ここで占有ロックをかける
-        //     $diff = LendingAggregate::diff($date, $item_id)
-        //         ->lockForUpdate()
-        //         ->first();
-        //
-        //     if ($diff - $amouut > 0)
-        //         貸出可能
-        //         lending_aggregatesテーブルのtotal_amountを更新
-        //         if (更新失敗)
-        //             throw new Exception('貸出物品の予約に失敗しました。');
-        //         reservation_itemsテーブルに予約情報を登録
-        //         if (登録失敗)
-        //             throw new Exception('貸出物品の予約に失敗しました。');
-        //     else
-        //         貸出不可
-        //         $error_items[] = [
-        //             'item_id' => $item_id,
-        //             'name' => Item::find($item_id)->name,
-        //             'amount' => $amount,
-        //         ];
-        //
-        // if (reservation_itemsに1件も登録できなかった場合)
-        //      throw new Exception('貸出物品の予約に失敗しました。');
-        //
-        // トランザクションのコミット
-        //
-        // } catch (Exception $e) {
-        //    エラーをログに記録
-        //    \Log::error('予約登録エラー: ' . $e->getMessage());
-        //
-        //    ユーザーフレンドリーなメッセージを準備
-        //    $errorMessage = '予約の登録中にエラーが発生しました。後でもう一度お試しください。';
-        //
-        //    エラーメッセージをフラッシュデータとしてセッションに保存
-        //    session()->flash('error', $errorMessage);
-        //
-        //    エラーページや元のページにリダイレクト
-        //    return redirect()->back()->withInput();
-        // }
-        //
-        // if (empty(error_items))
-        //     成功時の処理
-        //     session()->flash('success', '予約が正常に登録されました。');
-        //     return redirect()->route('reservations.show', $reservation->id);
-        // else
-        //     $data = [
-        //        'id' => reservation->id,
-        //        'date' => $reservation->reservation_date,
-        //        'error' => $error_items,..
-        //    ];
-        //    return view('show', $data);
+        try {
+
+            // reservationsテーブルに予約情報を登録
+            $reservation = Reservation::create([
+                'user_id' => self::USER,
+                'reservation_date' => now()->format('Y-m-d'),
+                'borrowing_start_date' => $date,
+            ]);
+
+            // 以後、$reservation->idで予約IDを取得できる
+
+            foreach ($item_ids as $index => $item_id) {
+                // total_amouutにamountを加算してstockを超えないか確認
+                // ※diffはstock - total_amount
+                $aggregate = LendingAggregate::diff($date, $item_id);
+
+                if ($aggregate->exists()) {
+                    // 他に予約がある場合
+                    $aggregate = $aggregate->lockForUpdate()->first();
+
+                    if ($aggregate->diff - $amount[$index] >= 0) {
+                        // 貸出可能
+                        // lending_aggregatesテーブルのtotal_amountを更新
+                        LendingAggregate::where('borrowing_start_date', $date)
+                            ->where('item_id', $item_id)
+                            ->update(['total_amount' => $aggregate->total_amount + $amount[$index]]);
+
+                    } else {
+                        // 貸出不可
+                        $out_of_stocks += [
+                            'item_id' => $item_id,
+                            'name' => $aggregate->name,
+                            'amount' => $amount,
+                        ];
+
+                        // foreachの次のループへ
+                        continue;
+                    }
+
+                } else {
+                    // 指定日・指定物品の初めての予約の場合
+                    LendingAggregate::create([
+                        'item_id' => $item_id,
+                        'borrowing_start_date' => $date,
+                        'total_amount' => $amount[$index],
+                    ]);
+                }
+
+                // reservation_itemsテーブルに予約情報を登録
+                ReservationItem::create([
+                    'reservation_id' => $reservation->id,
+                    'item_id' => $item_id,
+                    'amount' => $amount[$index],
+                ]);
+            }
+
+            // reservation_itemsに1件も登録できなかった場合（＝全ての物品が他の予約で貸出不可となった場合）
+            if (ReservationItem::where('reservation_id', $reservation->id)->doesntExist()) {
+                throw new Exception('貸出物品の予約に失敗しました。');
+            }
+
+            // トランザクションのコミット
+            DB::commit();
+
+            // =============================================
+            // *** 作業予定 ***
+            // Log::infoでログを記録
+            // 日付:reservation_id:登録した物品の総数（reservation_items）の形式
+            // =============================================
+
+        // 各種DB操作にエラーが発生した場合
+        } catch (Exception $e) {
+            // エラーをログに記録
+            // \Log::error('予約登録エラー: ' . $e->getMessage());
+
+            // $error_message = 'お手数ですが、もう一度お試しください。';
+
+            // トランザクションのロールバック
+            DB::rollBack();
+
+        } finally {
+            $message = empty($error_message) ? '予約が完了しました。' : '予約の登録中にエラーが発生しました。（予約失敗）';
+
+            // =============================================
+            // *** 作業予定 ***
+            // ReservationItemでscopeにしてもいいかも
+            // show_reservation()でも使われている
+            // =============================================
+            $items =  ReservationItem::with('item')
+                ->where('reservation_id', $reservation->id)
+                ->get()
+                ->sortBy('item.id');
+
+            $data += [
+                'date' => $reservation->reservation_date,
+                'items' => $items,
+                'message' => $message,               // 予約成功（commit）／失敗（rollback）のメッセージ
+                // 'error_message' => $error_message,   // Rollback実施時のメッセージ
+                'out_of_stocks' => $out_of_stocks,   // 貸出不可の物品
+           ];
+
+            // return view('show_create', $data);
+            return redirect()->route('home.show_reservation_result')->with($data);
+        }
     }
 
+    public function show_reservation_result()
+    {
+        $data = [
+            'title' => session('title'),
+            'date' => session('date'),
+            'items' => session('items'),
+            'message' => session('message'),
+            'out_of_stocks' => session('out_of_stocks'),
+            'error_message' => session('error_message')
+        ];
+
+        return view('create3_result_table', $data);
+    }
     /**
      * Display the specified resource.
      */

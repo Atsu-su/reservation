@@ -55,9 +55,9 @@ class DatabaseSeeder extends Seeder
                             // borrowing_start_dateとuser_idが複合キー
                             'user_id' => $user->id,
                             'borrowing_start_date' => now()->add((3 + $j), 'day')->format('Y-m-d'),
-
-                            'reservation_date' => now()->add($j, 'day')->format('Y-m-d'),                        
-                            'return_date' => now()->add((6 + $j), 'day')->format('Y-m-d'),
+                            'reservation_date' => now()->add($j, 'day')->format('Y-m-d'),
+                            // 'return_date' => now()->add((6 + $j), 'day')->format('Y-m-d'),
+                            'return_date' => null,
                             'status' => 0,
                         ]
                     );

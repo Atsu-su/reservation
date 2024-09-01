@@ -204,7 +204,6 @@ return [
         // 今回のアプリケーション専用
         'borrowing_start_date' => '貸出日',
         'item_ids' => '借りたい物品',
-        'today'=> '本日',
 
         // breezejpのデフォルト
         'address' => '住所',

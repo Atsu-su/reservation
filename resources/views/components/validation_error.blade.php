@@ -1,4 +1,4 @@
-<div class="error-box l-margintop20">
+<div class="error-box l-margintop20px">
   <ul>
     @foreach ($errors->all() as $error)
     <li>{{ $error }}</li>

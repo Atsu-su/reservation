@@ -10,6 +10,8 @@ class LendingAggregate extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function item()
     {
         return $this->belongsTo(Item::class);
@@ -31,10 +33,10 @@ class LendingAggregate extends Model
             ->select(
                 'l.item_id',
                 'i.name',
-                'l.total_amount',
                 'i.stock_amount',
+                'l.total_amount',
                 DB::raw('CAST(i.stock_amount AS SIGNED) - CAST(l.total_amount AS SIGNED) as diff'),
-                'limit'
+                'i.limit'
             );
     }
 }

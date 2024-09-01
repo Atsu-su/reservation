@@ -14,8 +14,9 @@
       @endif
       <p>{{ $message ?? 'メッセージはありません。' }}</p>
     </div>
+    <!-- バリデーションエラー用 -->
     @if ($errors->any())
-    <x-error />
+    <x-validation_error />
     @endif
     {{ $slot }}
   </main>
