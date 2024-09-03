@@ -7,12 +7,12 @@ use App\Http\Controllers\ReservationController;
 Route::get('/mock', [ReservationController::class, 'mock'])->name('mock');
 
 Route::get('/home', [ReservationController::class, 'index'])->name('home');
-Route::get('/home/create1', [ReservationController::class, 'create1_date_items'])->name('home.create1');
-Route::get('/home/create2', [ReservationController::class, 'create2_amount']);
-Route::post('/home/create2', [ReservationController::class, 'create2_amount'])->name('home.create2');
+Route::get('/home/create1', [ReservationController::class, 'createDateItems'])->name('home.create1');
+Route::get('/home/create2', [ReservationController::class, 'createAmount']);
+Route::post('/home/create2', [ReservationController::class, 'createAmount'])->name('home.create2');
 Route::post('/home/store', [ReservationController::class, 'store'])->name('home.store');
-Route::get('/home/result', [ReservationController::class, 'show_reservation_result'])->name('home.show_reservation_result');
-Route::get('/home/{id}', [ReservationController::class, 'show_reservation'])->name('home.show_reservation');
+Route::get('/home/result', [ReservationController::class, 'showReservationResult'])->name('home.show_reservation_result');
+Route::get('/home/{id}', [ReservationController::class, 'showReservation'])->name('home.show_reservation');
 
 Route::get('/proto', function(){
   return view('create3_result_table', [

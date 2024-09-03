@@ -10,6 +10,7 @@ use App\Models\LendingAggregate;
 use App\Models\Reservation;
 use App\Models\ReservationItem;
 use App\Models\User;
+use Exception;
 
 class ReservationController extends Controller
 {
@@ -81,7 +82,7 @@ class ReservationController extends Controller
      * Show the form for creating a new resource.
      * 貸出物品の新規登録画面を表示
      */
-    public function create1_date_items()
+    public function createDateItems()
     {
         // タイトル
         $data = $this->title['create'];
@@ -97,27 +98,27 @@ class ReservationController extends Controller
         return view('create1_date_items', $data);
     }
 
-    public function create2_amount(Request $request)
+    public function createAmount(Request $request)
     {
         // タイトル
         $data = $this->title['create'];
 
-        $item_ids = $request->query('item_ids');
+        $queryItemIds = $request->query('item_ids');
 
         // item_idsから0である要素を除外
-        $item_ids = array_filter(
-            $item_ids,
-            fn($item_id) => $item_id !== '0'
+        $queryItemIds = array_filter(
+            $queryItemIds,
+            fn($queryItemIds) => $queryItemIds !== '0'
         );
 
         // 重複している値を除外
-        $item_ids = array_unique($item_ids);
+        $queryItemIds = array_unique($queryItemIds);
 
         // indexを0から振り直す
-        $item_ids = array_values($item_ids);
+        $queryItemIds = array_values($queryItemIds);
 
         // リクエストにitem_idsの値を上書きする
-        $request->merge(['item_ids' => $item_ids]);
+        $request->merge(['item_ids' => $queryItemIds]);
 
         // validattion
         $validated = $request->validate([
@@ -136,7 +137,7 @@ class ReservationController extends Controller
 
         // 変数定義
         $date = $validated['borrowing_start_date']; // 予約日
-        $item_ids = $validated['item_ids'];         // 貸出物品ID
+        $itemIds = $validated['item_ids'];         // 貸出物品ID
         $result = [];       // viewに渡す配列
         $aggregate = null;  // 集計テーブルのクエリ
         $record = null;     // 集計テーブルのレコード
@@ -162,9 +163,9 @@ class ReservationController extends Controller
         // ---------------------------------------------------------
 
         // 他で使う場合はメソッドにする
-        foreach ($item_ids as $item_id) {
+        foreach ($itemIds as $itemId) {
             // テスト用データ
-            $aggregate = LendingAggregate::diff(self::RESERVATION_DATE, $item_id);
+            $aggregate = LendingAggregate::diff(self::RESERVATION_DATE, $itemId);
 
             if ($aggregate->exists()) {
                 $record = $aggregate->first();
@@ -186,9 +187,9 @@ class ReservationController extends Controller
                 }
             } else {
                 // 貸出可能
-                $item = Item::find($item_id);
+                $item = Item::find($itemId);
                 $result[] = [
-                    'item_id' => $item_id,
+                    'item_id' => $itemId,
                     'name' => $item->name,
                     'amount' => $item->limit,
                 ];
@@ -204,7 +205,7 @@ class ReservationController extends Controller
         // セッションに保存
         session([
             'date' => $date,
-            'item_ids' => $item_ids
+            'item_ids' => $itemIds
         ]);
 
         $data += [
@@ -237,7 +238,7 @@ class ReservationController extends Controller
 
         // 変数定義
         $date = session('date');
-        $item_ids = session('item_ids');
+        $itemIds = session('item_ids');
         $amount = $validated['amount'];
         $reservation = null;
         $aggregate = null;
@@ -259,10 +260,10 @@ class ReservationController extends Controller
 
             // 以後、$reservation->idで予約IDを取得できる
 
-            foreach ($item_ids as $index => $item_id) {
+            foreach ($itemIds as $index => $itemId) {
                 // total_amouutにamountを加算してstockを超えないか確認
                 // ※diffはstock - total_amount
-                $aggregate = LendingAggregate::diff($date, $item_id);
+                $aggregate = LendingAggregate::diff($date, $itemId);
 
                 if ($aggregate->exists()) {
                     // 他に予約がある場合
@@ -272,13 +273,13 @@ class ReservationController extends Controller
                         // 貸出可能
                         // lending_aggregatesテーブルのtotal_amountを更新
                         LendingAggregate::where('borrowing_start_date', $date)
-                            ->where('item_id', $item_id)
+                            ->where('item_id', $itemId)
                             ->update(['total_amount' => $aggregate->total_amount + $amount[$index]]);
 
                     } else {
                         // 貸出不可
                         $out_of_stocks += [
-                            'item_id' => $item_id,
+                            'item_id' => $itemId,
                             'name' => $aggregate->name,
                             'amount' => $amount,
                         ];
@@ -290,7 +291,7 @@ class ReservationController extends Controller
                 } else {
                     // 指定日・指定物品の初めての予約の場合
                     LendingAggregate::create([
-                        'item_id' => $item_id,
+                        'item_id' => $itemId,
                         'borrowing_start_date' => $date,
                         'total_amount' => $amount[$index],
                     ]);
@@ -299,7 +300,7 @@ class ReservationController extends Controller
                 // reservation_itemsテーブルに予約情報を登録
                 ReservationItem::create([
                     'reservation_id' => $reservation->id,
-                    'item_id' => $item_id,
+                    'item_id' => $itemId,
                     'amount' => $amount[$index],
                 ]);
             }
@@ -354,23 +355,26 @@ class ReservationController extends Controller
         }
     }
 
-    public function show_reservation_result()
+    // show_reservation()と統合できる
+    public function showReservationResult()
     {
-        $data = [
-            'title' => session('title'),
-            'date' => session('date'),
-            'items' => session('items'),
-            'message' => session('message'),
-            'out_of_stocks' => session('out_of_stocks'),
-            'error_message' => session('error_message')
-        ];
+        if (session('data')->has()){
+            $data = [
+                'title' => session('title'),
+                'date' => session('date'),
+                'items' => session('items'),
+                'message' => session('message'),
+                'out_of_stocks' => session('out_of_stocks'),
+                'error_message' => session('error_message')
+            ];
 
-        return view('create3_result_table', $data);
+            return view('create3_result_table', $data);
+        }
     }
     /**
      * Display the specified resource.
      */
-    public function show_reservation(string $id)
+    public function showReservation(string $id)
     {
         // タイトル
         $data = $this->title['show_reservation'];
