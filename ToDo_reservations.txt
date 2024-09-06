@@ -1,0 +1,47 @@
+・amount.0問題の解決
+
+==========================================================================
+
+php artisan make:rule ValidateAmount
+
+--------------------------------------------------------
+
+<?php
+
+namespace App\Rules;
+
+use Illuminate\Contracts\Validation\Rule;
+
+class ValidateAmount implements Rule
+{
+    public function passes($attribute, $value)
+    {
+	// 重複しているのでいらないかも
+        // if (!is_array($value) || empty($value)) {
+        //     return false;
+        // }
+
+        foreach ($value as $item) {
+            if (!is_numeric($item) || $item < 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function message()
+    {
+        return '個数を選択してください。';
+    }
+}
+
+--------------------------------------------------------
+
+[  ...,
+   'amount' => [required, array, new ValidateAmount()]
+]
+
+==========================================================================
+
+・home/{id}の表の表示（貸出日->予約日の順番にする）

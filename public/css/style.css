@@ -683,7 +683,7 @@ footer p {
   position: absolute;
   top: 50%;
   left: 0;
-  transform: translateY(-50%);
+  transform: translateY(-58%);  /* -8%は位置調整 */
   background-image: var(--img-exclaimation);
   background-size: contain;
 }
@@ -703,6 +703,7 @@ footer p {
 #create3_result_table table tr th:first-child {
   width: 10%;
 }
+
 
 #create3_result_table .failure-table p > a {
   color: rgb(0, 98, 255);

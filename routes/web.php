@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReservationController;
+use App\Models\ReservationItem;
 
 // mockのルート
 Route::get('/mock', [ReservationController::class, 'mock'])->name('mock');
@@ -12,11 +13,24 @@ Route::get('/home/create2', [ReservationController::class, 'createAmount']);
 Route::post('/home/create2', [ReservationController::class, 'createAmount'])->name('home.create2');
 Route::post('/home/store', [ReservationController::class, 'store'])->name('home.store');
 Route::get('/home/result', [ReservationController::class, 'showReservationResult'])->name('home.show_reservation_result');
+// Route::get('/home/modify1')
 Route::get('/home/{id}', [ReservationController::class, 'showReservation'])->name('home.show_reservation');
 
 Route::get('/proto', function(){
+  $items = ReservationItem::with('item')
+          ->where('reservation_id', 1)
+          ->orderBy('item_id', 'asc')
+          ->get();
+
   return view('create3_result_table', [
     'title' => '新規登録',
     'message' => '予約の登録中にエラーが発生しました。（予約失敗）',
+    'items' => $items,
+    'date' => '2021-08-01',
+    'transaction' => false,
+    'out_of_stocks' => [
+        ['name' => '商品A', 'amount' => 10],
+        ['name' => '商品B', 'amount' => 20],
+    ],
   ]);
 })->name('proto');

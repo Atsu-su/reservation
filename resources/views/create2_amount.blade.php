@@ -1,4 +1,4 @@
-<x-layouts.home :title="$title" :message_title="$message_title ?? ''" :message="$message">
+<x-layouts.home :title="$title ?? ''" :message_title="$message_title ?? ''" :message="$message ?? ''">
   <div class="l-margintop20px " id="create2_amount">
     <form action="{{ route('home.store') }}" method="post">
       @csrf

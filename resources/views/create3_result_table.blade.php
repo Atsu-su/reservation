@@ -1,12 +1,12 @@
 <x-layouts.home :title="$title" :message_title="$message_title ?? ''" :message="$message">
   <div id="create3_result_table">
-    <div class="reservation-failure l-margintop20px">
-      <div class="reservation-failure-message">
-        <p>時間をおいて再度予約してください。</p>
-      </div>
+    @if (! $transaction)
+    <div class="reservation-failure-message l-margintop20px">
+      <p>時間をあけて再度予約下さい。</p>
     </div>
+    @endif
     <div class="success-table">
-      <h2 class="l-margintop20px">予約日：2024-12-12</h2>
+      <h2 class="l-margintop20px">予約日：{{ $date }}</h2>
       <table class="c-table-format">
         <thead>
           <tr>
@@ -16,21 +16,22 @@
           </tr>
         </thead>
         <tbody>
+          @foreach ($items as $index => $item)
           <tr>
-            <td>1</td>
-            <td>name</td>
-            <td>amount</td>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ $item->item->name }}</td>
+            <!-- 数はcenterにする -->
+            <td>{{ $item->amount}}</td>
           </tr>
-          <tr>
-            <td>2</td>
-            <td>name</td>
-            <td>amount</td>
-          </tr>
+          @endforeach
         </tbody>
       </table>
     </div>
+    @if (! empty($out_of_stocks))
     <div class="failure-table">
-      <p class="l-margintop20px">次の物品の予約に失敗しました。</p>
+      <div class="reservation-failure-message l-margintop20px">
+        <p>次の物品の予約に失敗しました。</p>
+      </div>
       <p><a href="">こちらの予約変更</a>から再度予約してください。</p>
       <table class="c-table-format c-table-format--background-red">
         <thead>
@@ -41,19 +42,17 @@
           </tr>
         </thead>
         <tbody>
+          @foreach ($out_of_stocks as $index => $out_of_stock)
           <tr>
-            <td>1</td>
-            <td>name</td>
-            <td>amount</td>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ $out_of_stock['name'] }}</td>
+            <td>{{$out_of_stock['amount'] }}</td>
           </tr>
-          <tr>
-            <td>2</td>
-            <td>name</td>
-            <td>amount</td>
-          </tr>
+          @endforeach
         </tbody>
       </table>
     </div>
+    @endif
     <button class="l-margintop20pxauto0 c-button c-button--w200px c-button--white"><a href="">ホームに戻る</a></button>
 
     <!-- ==================================================== -->

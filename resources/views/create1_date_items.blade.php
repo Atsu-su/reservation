@@ -1,10 +1,11 @@
 <x-layouts.home :title="$title" :message_title="$message_title ?? ''" :message="$message">
   <div class="l-margintop20px " id="create1_date_items">
-    <form action="{{ route('home.create2') }}" method="get">
+    <form action="{{ route('home.create2') }}" method="post">
+      @csrf  
       <table class="c-table-format2">
         <tr>
           <td>貸出日</td>
-          <td><label><input type="date" name="borrowing_start_date"></label></td>
+          <td><label><input type="date" value="{{ old('borrowing_start_date') }}" name="borrowing_start_date"></label></td>
         </tr>
         @for ($i = 0; $i < 5; $i++)
           <tr>

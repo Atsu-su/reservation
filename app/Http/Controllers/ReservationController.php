@@ -11,11 +11,13 @@ use App\Models\Reservation;
 use App\Models\ReservationItem;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ReservationController extends Controller
 {
     // タイトル
-    private $title = [
+    private $titles = [
         'home' => ['title' => 'Home'],
         'create' => ['title' => '新規予約'],
         'update' => ['title' => '予約変更'],
@@ -58,7 +60,7 @@ class ReservationController extends Controller
     public function index()
     {
         // タイトル
-        $data = $this->title['home'];
+        $data = $this->titles['home'];
 
         // 貸出情報（reservationsテーブルのid/borrowing_start_date/reservation_date）
         $reservations = Reservation::where('user_id', self::USER)
@@ -81,11 +83,12 @@ class ReservationController extends Controller
     /**
      * Show the form for creating a new resource.
      * 貸出物品の新規登録画面を表示
+     * view('create1_date_items')
      */
     public function createDateItems()
     {
         // タイトル
-        $data = $this->title['create'];
+        $data = $this->titles['create'];
 
         $items = Item::select('id', 'name')->get();
         $message = "貸出日と貸出物品を選択してください。";
@@ -98,46 +101,54 @@ class ReservationController extends Controller
         return view('create1_date_items', $data);
     }
 
+    /**
+     * 個数を入力する画面を表示
+     * return view('create2_amount')
+     */
     public function createAmount(Request $request)
     {
         // タイトル
-        $data = $this->title['create'];
+        $data = $this->titles['create'];
 
-        $queryItemIds = $request->query('item_ids');
+        // store()のバリデーションエラー発生時リダイレクト対応
+        if (count(old()) > 0) {
+            // 再度$resultを取得する（$date, $item_idはバリデート済み）
+            $date = session('date');
+            $itemIds = session('item_ids');
+        } else {
+            // 初めてcreateAmout()にアクセスした場合
+            $inputItemIds = $request->input('item_ids');
 
-        // item_idsから0である要素を除外
-        $queryItemIds = array_filter(
-            $queryItemIds,
-            fn($queryItemIds) => $queryItemIds !== '0'
-        );
+            // item_idsから0である要素を除外
+            $inputItemIds = array_filter(
+                $inputItemIds,
+                fn($inputItemIds) => $inputItemIds !== '0'
+            );
 
-        // 重複している値を除外
-        $queryItemIds = array_unique($queryItemIds);
+            // 重複している値を除外
+            $inputItemIds = array_unique($inputItemIds);
 
-        // indexを0から振り直す
-        $queryItemIds = array_values($queryItemIds);
+            // indexを0から振り直す
+            $inputItemIds = array_values($inputItemIds);
 
-        // リクエストにitem_idsの値を上書きする
-        $request->merge(['item_ids' => $queryItemIds]);
+            // リクエストにitem_idsの値を上書きする
+            $request->merge(['item_ids' => $inputItemIds]);
 
-        // validattion
-        $validated = $request->validate([
-            // 日付の制約を除く（検証用）
-            'borrowing_start_date' => 'required|date',
-            // 'borrowing_start_date' => 'required|date|after_or_equal:today',
-            'item_ids' => 'required|array|filled',
+            // validattion
+            // ここを修正する（Validateファサードを使う）
+            $validated = $request->validate([
+                // 日付の制約を除く（検証用）
+                'borrowing_start_date' => 'required|date',
+                // 'borrowing_start_date' => 'required|date|after_or_equal:today',
+                'item_ids' => 'required|array|filled',
+                'item_ids.*' => 'required|integer',
+            ]);
 
-            // ===============================================
-            // *** 作成予定 ***
-            // カスタムバリデーションを追加
-            // item_idsの要素一つ一つのerrorが出力されるので見栄えが悪い
-            // ===============================================
-            'item_ids.*' => 'required|integer',
-        ]);
+            // 変数定義
+            $date = $validated['borrowing_start_date']; // 予約日
+            $itemIds = $validated['item_ids'];         // 貸出物品ID
+        }
 
-        // 変数定義
-        $date = $validated['borrowing_start_date']; // 予約日
-        $itemIds = $validated['item_ids'];         // 貸出物品ID
         $result = [];       // viewに渡す配列
         $aggregate = null;  // 集計テーブルのクエリ
         $record = null;     // 集計テーブルのレコード
@@ -220,10 +231,11 @@ class ReservationController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * view('create3_result_table')
      */
     public function store(Request $request)
     {
-        $data =  $this->title['create'];
+        $data =  $this->titles['create'];
 
         // =============================================
         // *** 対応予定 ***
@@ -233,6 +245,12 @@ class ReservationController extends Controller
         // バリデーション
         $validated = $request->validate([
             'amount' => 'required|array|filled',
+
+            // ===============================================
+            // *** 作成予定 ***
+            // カスタムバリデーションを追加
+            // item_idsの要素一つ一つのerrorが出力されるので見栄えが悪い
+            // ===============================================
             'amount.*' => 'required|integer|min:1',
         ]);
 
@@ -243,14 +261,16 @@ class ReservationController extends Controller
         $reservation = null;
         $aggregate = null;
         $out_of_stocks = [];
-        $error_message = '';
+        $transaction = true;    // トランザクションの成否
         $items =  null;
+
+        Log::channel('myown')->info('ログ出力開始');
+
 
         // トランザクションの開始
         DB::beginTransaction();
 
         try {
-
             // reservationsテーブルに予約情報を登録
             $reservation = Reservation::create([
                 'user_id' => self::USER,
@@ -307,7 +327,7 @@ class ReservationController extends Controller
 
             // reservation_itemsに1件も登録できなかった場合（＝全ての物品が他の予約で貸出不可となった場合）
             if (ReservationItem::where('reservation_id', $reservation->id)->doesntExist()) {
-                throw new Exception('貸出物品の予約に失敗しました。');
+                // throw new Exception('貸出物品の予約に失敗しました。');
             }
 
             // トランザクションのコミット
@@ -322,15 +342,15 @@ class ReservationController extends Controller
         // 各種DB操作にエラーが発生した場合
         } catch (Exception $e) {
             // エラーをログに記録
-            // \Log::error('予約登録エラー: ' . $e->getMessage());
+            Log::error($e->getMessage());
 
-            // $error_message = 'お手数ですが、もう一度お試しください。';
+            $transaction = false;
 
             // トランザクションのロールバック
             DB::rollBack();
 
         } finally {
-            $message = empty($error_message) ? '予約が完了しました。' : '予約の登録中にエラーが発生しました。（予約失敗）';
+            $message = $transaction ? '予約が完了しました。' : '予約の登録中にエラーが発生しました。（予約失敗）';
 
             // =============================================
             // *** 作業予定 ***
@@ -339,45 +359,43 @@ class ReservationController extends Controller
             // =============================================
             $items =  ReservationItem::with('item')
                 ->where('reservation_id', $reservation->id)
-                ->get()
-                ->sortBy('item.id');
+                ->orderBy('item_id', 'asc')
+                ->get();
 
             $data += [
                 'date' => $reservation->reservation_date,
                 'items' => $items,
                 'message' => $message,               // 予約成功（commit）／失敗（rollback）のメッセージ
-                // 'error_message' => $error_message,   // Rollback実施時のメッセージ
+                'transaction' => $transaction,       // transactionの成否
                 'out_of_stocks' => $out_of_stocks,   // 貸出不可の物品
            ];
 
             // return view('show_create', $data);
-            return redirect()->route('home.show_reservation_result')->with($data);
+            return redirect()->route('home.show_reservation_result')
+                ->with(['data' => $data]);
         }
     }
 
-    // show_reservation()と統合できる
+    // =============================================
+    // *** 作業予定 ***
+    // show_reservation()と統合する
+    // =============================================
     public function showReservationResult()
     {
-        if (session('data')->has()){
-            $data = [
-                'title' => session('title'),
-                'date' => session('date'),
-                'items' => session('items'),
-                'message' => session('message'),
-                'out_of_stocks' => session('out_of_stocks'),
-                'error_message' => session('error_message')
-            ];
-
+        if (session()->has('data')){
+            $data = session('data');
             return view('create3_result_table', $data);
         }
+        return to_route('home');
     }
+
     /**
      * Display the specified resource.
      */
     public function showReservation(string $id)
     {
         // タイトル
-        $data = $this->title['show_reservation'];
+        $data = $this->titles['show_reservation'];
 
         // 貸出物品の詳細を表示
         $reservationDate = Reservation::where('id', $id)->value('reservation_date');
@@ -397,9 +415,20 @@ class ReservationController extends Controller
         return view('reservation_detail_table', $data);
     }
 
-    public function stock_show()
+    public function stock_show(Request $request)
     {
-        //
+        // タイトル
+        $data = $this->titles['show_stock'];
+
+        // $request()->query('date')で取得
+
+        // バリデーション（日付）
+
+        // ReservationItem::diff()->with('item')で取得
+
+        // dataを作成
+
+        return view('stock_table', $data);
     }
 
     /**
