@@ -25,6 +25,16 @@ class ReservationController extends Controller
         'show_reservation' => ['title' => '予約確認'],
     ];
 
+    // メッセージタイトル
+    private $messageTitles = [
+        'home' => ['message_title' => 'Home'],
+        'create' => ['message_title' => '新規予約'],
+        'update_date' => ['message_title' => '貸出日変更'],
+        'update_item' => ['message_title' => '貸出物品変更'],
+        'show_stock' => ['message_title' => '在庫確認'],
+        'show_reservation' => ['message_title' => '予約確認'],
+    ];
+
     // ============================================================================
     // 検証用の設定
 
@@ -52,16 +62,90 @@ class ReservationController extends Controller
         $message = session('message');
         return view('mock', compact('data', 'message'));
     }
+
+    public function mock2()
+    {
+        $date = session('date');
+        $message = session('message');
+        return view('mock', compact('date', 'message'));
+    }
     // ============================================================================
+
+    /**
+     * 予約日が重複しているかチェック
+     * 重複している場合はリダイレクト
+     * @param array $value
+     * @return \Illuminate\Http\RedirectResponse | void
+     * $value = [
+     *  'user_id' => [int],
+     *  'borrowing_start_date' => [string],
+     *  'redirect' => [string],
+     *  'message' => [string],
+     * ]
+     */
+    public function doubleBookedCheck(array $value)
+    {
+        // 予約日とユーザIDで検索してreservationsテーブルを検索し、
+        // レコードがあれば更新処理へ転送
+        if (Reservation::where('user_id', $value['user_id'])
+            ->where('borrowing_start_date', $value['borrowing_start_date'])
+            ->exists()
+        ) {
+            return redirect()->route($value['redirect'])->with([
+                'date' => $value['borrowing_start_date'],
+                'message' => $value['message'],
+            ]);
+        }
+    }
+
+    /**
+     * 貸出可能な物品数を出力する
+     * @param string $date, array $itemIds, array $result
+     * $resultは参照渡し（ポインタ）とする
+     */
+    // public function setAmount($date, $itemIds, &$result)
+    // 開発用関数
+    public function setAmount($date = self::RESERVATION_DATE, $itemIds, &$result)
+    {
+        foreach ($itemIds as $itemId) {
+            // テスト用データ
+            $aggregate = LendingAggregate::diff($date, $itemId);
+
+            if ($aggregate->exists()) {
+                $record = $aggregate->first();
+                if ($record->diff > 0) {
+                    // 貸出可能なので、貸出数を決定する
+                    $amount = $record->diff < $record->limit ? $record->diff : $record->limit;
+                    $result[] = [
+                        'item_id' => $record->item_id,
+                        'name' => $record->name,
+                        'amount' => $amount,
+                    ];
+                } else {
+                    // 貸出不可
+                    $result[] = [
+                        'item_id' => $record->item_id,
+                        'name' => $record->name,
+                        'amount' => 0,
+                    ];
+                }
+            } else {
+                // 貸出可能
+                $item = Item::find($itemId);
+                $result[] = [
+                    'item_id' => $itemId,
+                    'name' => $item->name,
+                    'amount' => $item->limit,
+                ];
+            }
+        }
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // タイトル
-        $data = $this->titles['home'];
-
         // 貸出情報（reservationsテーブルのid/borrowing_start_date/reservation_date）
         $reservations = Reservation::where('user_id', self::USER)
             ->orderBy('reservation_date', 'asc')
@@ -71,7 +155,9 @@ class ReservationController extends Controller
         $user = User::find(self::USER);
         $message = "ID番号:{$user->id} {$user->name}さんの貸出予約情報です。";
 
-        $data += [
+        $data = [
+            ...$this->titles['home'],
+            ...$this->messageTitles['home'],
             'reservations' => $reservations,
             'message' => $message
         ];
@@ -113,10 +199,10 @@ class ReservationController extends Controller
         // store()のバリデーションエラー発生時リダイレクト対応
         if (count(old()) > 0) {
             // 再度$resultを取得する（$date, $item_idはバリデート済み）
-            $date = session('date');
-            $itemIds = session('item_ids');
+            $date = session('create_date');
+            $itemIds = session('create_item_ids');
         } else {
-            // 初めてcreateAmout()にアクセスした場合
+            // 初めてcreateAmount()にアクセスした場合
             $inputItemIds = $request->input('item_ids');
 
             // item_idsから0である要素を除外
@@ -162,7 +248,8 @@ class ReservationController extends Controller
         // レコードがあれば更新処理へ転送
         if (Reservation::where('user_id', self::USER)
             ->where('borrowing_start_date', $date)
-            ->exists()) {
+            ->exists()
+        ) {
             return redirect()->route('mock')->with([
                 'data' => $date,
                 'message' => '予約日が重複しているのでリダイレクトされました。'
@@ -181,9 +268,9 @@ class ReservationController extends Controller
             if ($aggregate->exists()) {
                 $record = $aggregate->first();
                 if ($record->diff > 0) {
-                     // 貸出可能なので、貸出数を決定する
-                     $amount = $record->diff < $record->limit ? $record->diff : $record->limit;
-                     $result[] = [
+                    // 貸出可能なので、貸出数を決定する
+                    $amount = $record->diff < $record->limit ? $record->diff : $record->limit;
+                    $result[] = [
                         'item_id' => $record->item_id,
                         'name' => $record->name,
                         'amount' => $amount,
@@ -194,7 +281,7 @@ class ReservationController extends Controller
                         'item_id' => $record->item_id,
                         'name' => $record->name,
                         'amount' => 0,
-                     ];
+                    ];
                 }
             } else {
                 // 貸出可能
@@ -215,8 +302,8 @@ class ReservationController extends Controller
 
         // セッションに保存
         session([
-            'date' => $date,
-            'item_ids' => $itemIds
+            'create_date' => $date,
+            'create_item_ids' => $itemIds
         ]);
 
         $data += [
@@ -255,8 +342,8 @@ class ReservationController extends Controller
         ]);
 
         // 変数定義
-        $date = session('date');
-        $itemIds = session('item_ids');
+        $date = session('create_date');
+        $itemIds = session('create_item_ids');
         $amount = $validated['amount'];
         $reservation = null;
         $aggregate = null;
@@ -295,7 +382,6 @@ class ReservationController extends Controller
                         LendingAggregate::where('borrowing_start_date', $date)
                             ->where('item_id', $itemId)
                             ->update(['total_amount' => $aggregate->total_amount + $amount[$index]]);
-
                     } else {
                         // 貸出不可
                         $out_of_stocks += [
@@ -307,7 +393,6 @@ class ReservationController extends Controller
                         // foreachの次のループへ
                         continue;
                     }
-
                 } else {
                     // 指定日・指定物品の初めての予約の場合
                     LendingAggregate::create([
@@ -339,7 +424,7 @@ class ReservationController extends Controller
             // 日付:reservation_id:登録した物品の総数（reservation_items）の形式
             // =============================================
 
-        // 各種DB操作にエラーが発生した場合
+            // 各種DB操作にエラーが発生した場合
         } catch (Exception $e) {
             // エラーをログに記録
             Log::error($e->getMessage());
@@ -348,9 +433,14 @@ class ReservationController extends Controller
 
             // トランザクションのロールバック
             DB::rollBack();
-
         } finally {
             $message = $transaction ? '予約が完了しました。' : '予約の登録中にエラーが発生しました。（予約失敗）';
+
+            // =============================================
+            // *** 作業予定 ***
+            // セッションの削除（session('create_date'), session('create_item_ids'））
+            // =============================================
+            session()->forget(['create_date', 'create_item_ids']);
 
             // =============================================
             // *** 作業予定 ***
@@ -363,15 +453,15 @@ class ReservationController extends Controller
                 ->get();
 
             $data += [
-                'date' => $reservation->reservation_date,
+                'date' => $date,                     // 貸出日
                 'items' => $items,
                 'message' => $message,               // 予約成功（commit）／失敗（rollback）のメッセージ
                 'transaction' => $transaction,       // transactionの成否
                 'out_of_stocks' => $out_of_stocks,   // 貸出不可の物品
-           ];
+            ];
 
             // return view('show_create', $data);
-            return redirect()->route('home.show_reservation_result')
+            return redirect()->route('home.show-reservation-result')
                 ->with(['data' => $data]);
         }
     }
@@ -382,7 +472,7 @@ class ReservationController extends Controller
     // =============================================
     public function showReservationResult()
     {
-        if (session()->has('data')){
+        if (session()->has('data')) {
             $data = session('data');
             return view('create3_result_table', $data);
         }
@@ -394,28 +484,33 @@ class ReservationController extends Controller
      */
     public function showReservation(string $id)
     {
+        session()->forget('reservation_id');
+
         // タイトル
         $data = $this->titles['show_reservation'];
 
         // 貸出物品の詳細を表示
-        $reservationDate = Reservation::where('id', $id)->value('reservation_date');
-        $reservationItems = ReservationItem::with('item')
+        $borrowingStartDate = Reservation::where('id', $id)->value('borrowing_start_date');
+        $items = ReservationItem::with('item')
             ->where('reservation_id', $id)
             ->get()
             ->sortBy('item.id');
 
         // message
-        $message = "貸出日は{$reservationDate}です。";
+        $message = "貸出日は{$borrowingStartDate}です。";
+
+        session(['reservation_id' => $id]);
 
         $data += [
+            'items' => $items,
+            'message_title' => '予約詳細',
             'message' => $message,
-            'reservationItems' => $reservationItems
         ];
 
         return view('reservation_detail_table', $data);
     }
 
-    public function stock_show(Request $request)
+    public function showStock(Request $request)
     {
         // タイトル
         $data = $this->titles['show_stock'];
@@ -432,11 +527,90 @@ class ReservationController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * 貸出日選択画面の表示（貸出日の変更）
+     * return view('edit1_date')
      */
-    public function edit(string $id)
+    public function editDate(string $id)
     {
-        //
+        session()->forget('edit_items_ids', 'edit_items');
+
+        $data =  $this->titles['update'];
+
+        // reservation_idがこのメソッドに渡される
+        // 日付の変更／貸出物品の変更の2種類
+
+        // 予約済みの物品情報を取得
+        $items = ReservationItem::with('item')
+            ->where('reservation_id', $id)
+            ->orderBy('item_id', 'asc')
+            ->get();
+
+        $itemIds = $items->pluck('item_id')->toArray();
+
+        // 貸出予定の物品ID／物品名／貸出数をセッションに保存
+        session([
+            'edit_item_ids' => $itemIds,
+            'edit_items' =>  $items,
+        ]);
+
+        // $dataを準備
+        $data += [
+            'reservation_id' => $id,
+            'items' => $items,
+            'message_title' => '予約更新（貸出日変更）',
+            'message' => '予約日を変更してください。',
+        ];
+
+        // 予約日の変更画面を表示
+        return view('edit_date', $data);
+    }
+
+    public function editAmount(Request $request)
+    {
+        $data =  $this->titles['update'];
+
+        // バリデーション
+        $validated =  $request->validate([
+            'borrowing_start_date' => 'required|date',
+        ]);
+
+        $date =  $validated['borrowing_start_date'];
+        $itemIds = session('edit_item_ids');
+        // $userId =  auth()->id();
+
+        // ---------------------------------------------------------
+        // 指定された日付で既に予約されている場合、更新処理へリダイレクト
+        // ---------------------------------------------------------
+        $value = [
+            'user_id' => self::USER,
+            // 'user_id' => $userId,
+            'borrowing_start_date' => $date,
+            'redirect' => 'mock2',
+            'message' => '予約日が重複しています。更新処理を行いますか？',
+        ];
+
+        $this->doubleBookedCheck($value);
+
+        // ---------------------------------------------------------
+        // 指定された日付に予約がない場合、貸出可能数を決定する
+        // ---------------------------------------------------------
+        $result = [];
+
+        $this->setAmount($date, $itemIds, $result);
+
+        // セッションに保存
+        session([
+            'edit_date' => $date,
+        ]);
+
+        $data += [
+            'date' => $date,
+            'result' => $result,
+            'message_title' =>  '予約更新（貸出日変更）',
+            'message' => '貸出数を入力してください。',
+        ];
+
+        return view('create2_amount', $data);
     }
 
     /**

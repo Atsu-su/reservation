@@ -1,4 +1,4 @@
-<x-layouts.home :title="$title" :message_title="$message_title ?? ''" :message="$message">
+<x-layouts.home :title="$title" :messagetitle="$message_title" :message="$message">
   <div id="create3_result_table">
     @if (! $transaction)
     <div class="reservation-failure-message l-margintop20px">
@@ -16,11 +16,10 @@
           </tr>
         </thead>
         <tbody>
-          @foreach ($items as $index => $item)
+          @foreach ($items as $item)
           <tr>
-            <td>{{ $index + 1 }}</td>
+            <td>{{ $loop->iteration }}</td>
             <td>{{ $item->item->name }}</td>
-            <!-- 数はcenterにする -->
             <td>{{ $item->amount}}</td>
           </tr>
           @endforeach

@@ -14,8 +14,8 @@
     </div>
     <main>
       <div class="message-box">
-        @if (! empty($message_title))
-          <h1>{{ $message_title }}</h1>
+        @if (! empty($messagetitle))
+          <h1>{{ $messagetitle }}</h1>
         @endif
         <p>{{ $message ?? 'メッセージはありません。' }}</p>
       </div>
