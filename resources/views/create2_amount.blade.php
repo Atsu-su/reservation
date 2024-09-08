@@ -29,6 +29,9 @@
                  *** 作業予定 ***
                  スタイルをつける
                  ============================ -->
+
+            <!-- これがないとitem_ids[]の要素数とamount[]の要素数が一致しない（amount[]の要素数が足りない） -->
+            <input type="hidden" name="amount[]" value="0">
             <span class="not-available-message">当日の在庫がありません</span>
             @endif
           </td>

@@ -9,7 +9,7 @@ Route::get('/mock', [ReservationController::class, 'mock'])->name('mock');
 Route::get('/mock2', [ReservationController::class, 'mock2'])->name('mock2');
 
 Route::get('/home', [ReservationController::class, 'index'])->name('home');
-Route::get('/stock', [ReservationController::class, 'selectDate'])->name('show-stock');
+Route::get('/stock', [ReservationController::class, 'selectDate'])->name('select-date');
 Route::post('/stock/result', [ReservationController::class, 'showStock'])->name('show-stock');
 Route::get('/home/create1', [ReservationController::class, 'createDateItems'])->name('home.create1');
 Route::get('/home/create2', [ReservationController::class, 'createAmount']);

@@ -41,11 +41,11 @@
           </tr>
         </thead>
         <tbody>
-          @foreach ($out_of_stocks as $index => $out_of_stock)
+          @foreach ($out_of_stocks as $out_of_stock)
           <tr>
-            <td>{{ $index + 1 }}</td>
+            <td>{{ $loop->iteration }}</td>
             <td>{{ $out_of_stock['name'] }}</td>
-            <td>{{$out_of_stock['amount'] }}</td>
+            <td>{{ $out_of_stock['amount'] }}</td>
           </tr>
           @endforeach
         </tbody>

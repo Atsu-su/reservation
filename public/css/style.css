@@ -346,6 +346,7 @@ iframe {
 /* reservation_table
 /* reservation_detail_table
 /* create3_result_table
+/* stock_table
 /* ------------------ */
 .c-table-format {
   width: 100%;
@@ -404,6 +405,8 @@ iframe {
 /* ------------------ */
 /* create1_date_items
 /* create2_amount
+/* edit_date
+/* select_date
 /* ------------------ */
 .c-table-format2 {
   width: 100%;
@@ -706,9 +709,18 @@ footer p {
   width: 10%;
 }
 
-
 #create3_result_table .failure-table p > a {
   color: rgb(0, 98, 255);
   font-weight: bold;
   text-decoration: underline;
+}
+
+/* stock_table */
+#stock_table table {
+  width: 80%;
+  table-layout: fixed;
+}
+
+#stock_table table tr th:first-child {
+  width: 100px;
 }

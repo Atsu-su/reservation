@@ -10,6 +10,7 @@ use App\Models\LendingAggregate;
 use App\Models\Reservation;
 use App\Models\ReservationItem;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -40,7 +41,7 @@ class ReservationController extends Controller
 
     // テスト用の定数
     // 仮のユーザID（ログインユーザIDとなる）
-    const USER = 8;
+    const USER = 1;
     // 仮の予約日付
     const RESERVATION_DATE = '2024-09-04';
 
@@ -213,9 +214,9 @@ class ReservationController extends Controller
         }
 
         // reservation_itemsに1件も登録できなかった場合（＝全ての物品が他の予約で貸出不可となった場合）
-        // if (ReservationItem::where('reservation_id', $reservation->id)->doesntExist()) {
+        if (ReservationItem::where('reservation_id', $reservation->id)->doesntExist()) {
             throw new Exception('貸出物品の予約に失敗しました。');
-        // }
+        }
     }
 
     /**
@@ -276,21 +277,25 @@ class ReservationController extends Controller
             if ($stock) {
                 $result[$i] = [
                     'name' =>  $stock->item->name,
-                    'remaining_stock' => ($item->stock_amount - $stock->total_amount),
+                    'available_stock' => ($item->stock_amount - $stock->total_amount),
                 ];
             } else {
                 $result[$i] = [
                     'name' =>  $item->name,
-                    'remaining_stock' => $item->stock_amount,
+                    'available_stock' => $item->stock_amount,
                 ];
             }
         }
+
+        // 情報取得時間を取得
+        $now =  Carbon::now();
+        $formattedNow = $now->format('Y年n月j日 G時i分s秒');
 
         // dataを作成
         $data = [
             ...$this->titles['show_stock'],
             ...$this->messageTitles['show_stock'],
-            'message' => "yyyy年mm月dd日h:m時点の在庫状況です。",
+            'message' => "{$formattedNow}時点の在庫状況です。",
             'date' => $date,
             'result' =>  $result,
         ];
@@ -514,10 +519,15 @@ class ReservationController extends Controller
                             ->update(['total_amount' => $aggregate->total_amount + $amount[$index]]);
                     } else {
                         // 貸出不可
-                        $out_of_stocks += [
+
+                        // =============================================
+                        // この変数をbladeで扱う際にエラーが出力される
+                        // [previous exception] [object] (TypeError(code: 0): Cannot access offset of type string on string at /Applications/MAMP/htdocs/work/laravel/reservation/storage/framework/views/baed35d73a60ea5d856f98e7e7248368.php:56)
+                        // =============================================
+                        $out_of_stocks[] = [
                             'item_id' => $itemId,
                             'name' => $aggregate->name,
-                            'amount' => $amount,
+                            'amount' => $amount[$index],
                         ];
 
                         // foreachの次のループへ
@@ -541,13 +551,16 @@ class ReservationController extends Controller
             }
 
             // reservation_itemsに1件も登録できなかった場合（＝全ての物品が他の予約で貸出不可となった場合）
-            // if (ReservationItem::where('reservation_id', $reservation->id)->doesntExist()) {
+            if (ReservationItem::where('reservation_id', $reservation->id)->doesntExist()) {
                 throw new Exception('貸出物品の予約に失敗しました。');
-            // }
+            }
 
             // トランザクションのコミット
             DB::commit();
             Log::channel('myown')->info('[CREATE]トランザクション完了');
+
+            // セッションの削除（finallyにおくと戻った場合に再度処理ができない...できなくていいのかもだが）
+            session()->forget(['create_date', 'create_item_ids']);
 
             // =============================================
             // *** 作業予定 ***
@@ -555,10 +568,14 @@ class ReservationController extends Controller
             // 日付:reservation_id:登録した物品の総数（reservation_items）の形式
             // =============================================
 
-            // 各種DB操作にエラーが発生した場合
+        // 各種DB操作にエラーが発生した場合
         } catch (Exception $e) {
             // エラーをログに記録
-            Log::error($e->getMessage());
+            Log::error('An error occurred: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
             $transaction = false;
 
@@ -569,10 +586,7 @@ class ReservationController extends Controller
         } finally {
             $message = $transaction ? '予約が完了しました。' : '予約の登録中にエラーが発生しました。（予約失敗）';
 
-            // =============================================
-            // *** 作業予定 ***
-            // セッションの削除（session('create_date'), session('create_item_ids'））
-            // =============================================
+            // セッションの削除
             session()->forget(['create_date', 'create_item_ids']);
 
             // =============================================
@@ -596,6 +610,8 @@ class ReservationController extends Controller
                 'transaction' => $transaction,       // transactionの成否
                 'out_of_stocks' => $out_of_stocks,   // 貸出不可の物品
             ];
+
+            dd($data);
 
             // return view('show_create', $data);
             return redirect()->route('home.show-reservation-result')
@@ -696,14 +712,23 @@ class ReservationController extends Controller
 
     public function editAmount(Request $request)
     {
-        // バリデーション
-        $validated =  $request->validate([
-            'borrowing_start_date' => 'required|date',
-        ]);
+        if (count(old()) > 0) {
+            $date = session('edit_date');
 
-        $date =  $validated['borrowing_start_date'];
-        $itemIds = session('edit_item_ids');
-        // $userId =  auth()->id();
+        } else {
+            // バリデーション
+            $validated =  $request->validate([
+                'borrowing_start_date' => 'required|date',
+            ]);
+
+            // 変数定義
+            $date =  $validated['borrowing_start_date'];
+            $itemIds = session('edit_item_ids');
+            // $userId =  auth()->id();
+        }
+
+        // セッション初期化
+        session()->forget(['edit_date']);
 
         // ---------------------------------------------------------
         // 指定された日付で既に予約されている場合、更新処理へリダイレクト
@@ -748,13 +773,16 @@ class ReservationController extends Controller
      */
     public function update(Request $request)
     {
+        dd(session()->all());
         // 貸出数のバリデーション
 
         // 1. 日付変更の場合
         // （変更箇所）
-        // ・reservationテーブルのborrowing_start_dateを更新（reservation_id）
         // ・lending_aggregatesテーブルのtotal_amountを更新（date/item_id/amount）
+        //   -> 既に予約されている物品のキャンセル（total_amountを減らす）※割込関連のエラーはなし
+        //   -> 変更された日のtotal_amountを増やす ※割込関連のエラーあり
         // ・reservation_itemsテーブルのamountを更新（reservation_id/item_id/amount）
+        // ・reservationテーブルのborrowing_start_dateを更新（reservation_id）
 
         return <<<EOF
         成功！
