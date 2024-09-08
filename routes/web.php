@@ -9,6 +9,8 @@ Route::get('/mock', [ReservationController::class, 'mock'])->name('mock');
 Route::get('/mock2', [ReservationController::class, 'mock2'])->name('mock2');
 
 Route::get('/home', [ReservationController::class, 'index'])->name('home');
+Route::get('/stock', [ReservationController::class, 'selectDate'])->name('show-stock');
+Route::post('/stock/result', [ReservationController::class, 'showStock'])->name('show-stock');
 Route::get('/home/create1', [ReservationController::class, 'createDateItems'])->name('home.create1');
 Route::get('/home/create2', [ReservationController::class, 'createAmount']);
 Route::post('/home/create2', [ReservationController::class, 'createAmount'])->name('home.create2');
@@ -16,8 +18,8 @@ Route::get('/home/edit1/{id}', [ReservationController::class, 'editDate'])->name
 Route::get('/home/edit2/{id}', [ReservationController::class, 'editAmount'])->name('home.edit-amount');
 Route::post('/home/edit2/{id}', [ReservationController::class, 'editAmount'])->name('home.edit-amount');
 Route::post('/home/store', [ReservationController::class, 'store'])->name('home.store');
+Route::post('/home/update', [ReservationController::class, 'update'])->name('home.update');
 Route::get('/home/result', [ReservationController::class, 'showReservationResult'])->name('home.show-reservation-result');
-// Route::get('/home/modify1')
 Route::get('/home/{id}', [ReservationController::class, 'showReservation'])->name('home.show-reservation');
 
 Route::get('/proto', function () {

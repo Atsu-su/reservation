@@ -4,7 +4,7 @@
     <div class="reservation-failure-message l-margintop20px">
       <p>時間をあけて再度予約下さい。</p>
     </div>
-    @endif
+    @else
     <div class="success-table">
       <h2 class="l-margintop20px">予約日：{{ $date }}</h2>
       <table class="c-table-format">
@@ -51,6 +51,7 @@
         </tbody>
       </table>
     </div>
+    @endif
     @endif
     <button class="l-margintop20pxauto0 c-button c-button--w200px c-button--white"><a href="">ホームに戻る</a></button>
 

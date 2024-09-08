@@ -1,7 +1,11 @@
 <x-layouts.home :title="$title" :messagetitle="$message_title" :message="$message">
   <div class="l-margintop20px " id="create2_amount">
+    @if (Str::contains(request()->url(), 'create'))
     <form action="{{ route('home.store') }}" method="post">
-      @csrf
+    @else
+    <form action="{{ route('home.update') }}" method="post">
+    @endif
+    @csrf
       <table class="c-table-format2">
         <tr>
           <td>貸出日</td>

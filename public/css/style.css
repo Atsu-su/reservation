@@ -582,20 +582,25 @@ footer p {
 
 /* reservation_table */
 #reservation_table table {
+  width: 80%;
   table-layout: fixed;
 }
 
 #reservation_table table tr th:first-child {
-  width: 180px;
+  width: 100px;
+}
+
+#reservation_table table tr th:nth-child(2) {
   position: relative;
 }
 
-#reservation_table table tr th:first-child::after {
-  content: "詳細はクリック";
-  padding-left: 4px;
+#reservation_table table tr th:nth-child(2)::after {
+  content: "クリックして詳細表示";
+  padding-left: 2px;
   position: absolute;
-  top: 10px;
-  left: 40px;
+  top: 50%;
+  left: 70px;
+  transform: translateY(-50%);
   font-size: 10px;
   font-weight: bold;
   text-align: center;
@@ -604,12 +609,8 @@ footer p {
   border-radius: 5px;
 }
 
-#reservation_table table tr td:first-child {
-  padding: 0;
-}
 
-#reservation_table table tr td:first-child a {
-  padding: 10px 8px;
+#reservation_table table tr td:nth-child(2) a {
   width: 100%;
   display: block;
   color: rgb(0, 98, 255);

@@ -4,8 +4,8 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>貸出日</th>
-          <th>予約日</th>
+          <th>物品名</th>
+          <th>在庫数</th>
         </tr>
       </thead>
       <tbody>
